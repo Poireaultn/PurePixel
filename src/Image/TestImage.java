@@ -11,7 +11,8 @@ public class TestImage {
 		try {
 			Image img = new Image("src/Image/lena.jpg"); // Charge l’image
 			img.afficherMatrice(); // Affiche la matrice
-
+				
+			//
 			int width = img.getWidth();
 			int height = img.getHeight();
 			double[][] pixels = img.getPixels(); // Récupère les pixels avec un getter
@@ -29,10 +30,12 @@ public class TestImage {
 			// Sauvegarde de l’image résultante
 			ImageIO.write(bi, "png", new File("src/Image/test1.png"));
 			System.out.println("Image en niveaux de gris sauvegardée.");
-
+			int i = Patch.ExtractPatchs(img, 3,2);
 		} catch (IOException e) {
 			System.out.println("Erreur lors du traitement de l'image : " + e.getMessage());
 		}
 	}
+	
+	
 }
 
