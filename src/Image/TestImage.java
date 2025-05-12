@@ -9,9 +9,11 @@ import javax.imageio.ImageIO;
 public class TestImage {
 	public static void main(String[] args) {
 		try {
-			Image img = new Image("src/Image/lena.jpg"); // Charge l’image
+			Image img = new Image("Image/lena.jpg"); // Charge l’image
 			img.afficherMatrice(); // Affiche la matrice
-
+			
+			img = Image.noising(img,10);
+			
 			int width = img.getWidth();
 			int height = img.getHeight();
 			double[][] pixels = img.getPixels(); // Récupère les pixels avec un getter
@@ -27,7 +29,7 @@ public class TestImage {
 			}
 
 			// Sauvegarde de l’image résultante
-			ImageIO.write(bi, "png", new File("src/Image/test1.png"));
+			ImageIO.write(bi, "png", new File("Image/test2.jpg"));
 			System.out.println("Image en niveaux de gris sauvegardée.");
 
 		} catch (IOException e) {

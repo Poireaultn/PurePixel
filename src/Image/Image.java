@@ -61,6 +61,35 @@ public class Image {
 	public double[][] getPixels() {
 	    return this.pixels;
 	}
+	
+	public static Image noising(Image img,double ecart_type) {
+		for(int i = 0; i < img.getHeight(); i++) {
+			for(int j = 0; j < img.getWidth(); j++) {
+				// Simulation d'une loi normale centré avec l'écart type en paramètre
+				double S = 0;
+				for(int s = 0; s < 12; s++) {
+					// Simulation de loi uniforme sur [0;1]
+					double X = Math.random();
+					S = S + X;					
+				}
+				S = S - 6; // S suit une loi normale centrée réduite
+				
+				S = S*ecart_type; // S suit loi normale centrée en 0 et de variance σ²=ecart_type²
+				
+				// On ajoute le bruit gaussien
+				img.pixels[i][j]=img.pixels[i][j]+S;
+				
+				// On empêche les valeurs au dessus de 255 et en dessous de 0
+				if(img.pixels[i][j]>255) {
+					img.pixels[i][j]=255;
+				}
+				if(img.pixels[i][j]<0) {
+					img.pixels[i][j]=0;
+				}				
+			}
+		}
+		return img;
+	}
 
 
 }
