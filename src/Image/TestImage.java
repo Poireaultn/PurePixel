@@ -14,27 +14,10 @@ public class TestImage {
 			
 			img = Image.noising(img,10);
 			
-			int width = img.getWidth();
-			int height = img.getHeight();
-			double[][] pixels = img.getPixels(); // Récupère les pixels avec un getter
-
-			BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-
-			for (int y = 0; y < height; y++) {
-				for (int x = 0; x < width; x++) {
-					int gray = (int) pixels[y][x];
-					int rgb = (gray << 16) | (gray << 8) | gray;
-					bi.setRGB(x, y, rgb);
-				}
-			}
-
-			// Sauvegarde de l’image résultante
-			ImageIO.write(bi, "png", new File("Image/test2.jpg"));
-			System.out.println("Image en niveaux de gris sauvegardée.");
+			Image.EnregistrerImage(img,"Image/test2.jpg");
 
 		} catch (IOException e) {
 			System.out.println("Erreur lors du traitement de l'image : " + e.getMessage());
 		}
 	}
 }
-

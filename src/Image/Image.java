@@ -31,6 +31,26 @@ public class Image {
 		}
 		return gray;
 	}
+	
+	public static void EnregistrerImage(Image img, String filePath) throws IOException {
+		int width = img.getWidth();
+		int height = img.getHeight();
+		double[][] pixels = img.getPixels(); // Récupère les pixels avec un getter
+
+		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				int gray = (int) pixels[y][x];
+				int rgb = (gray << 16) | (gray << 8) | gray;
+				bi.setRGB(x, y, rgb);
+			}
+		}
+
+		// Sauvegarde de l’image résultante
+		ImageIO.write(bi, "png", new File(filePath));
+		System.out.println("Image en niveaux de gris sauvegardée.");
+	}
 
 	public void afficherMatrice() {
 		for (int y = 0; y < this.height; y++) {
