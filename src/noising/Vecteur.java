@@ -1,17 +1,18 @@
 package noising;
 
-public class Vector {
+public class Vecteur {
 	
 	private int  IdVector;
 	private int taille;
 	private double[] valeur;
 	
 	
-	public Vector(int idVector, int taille, double[] valeur) {
-		IdVector = idVector;
+	public Vecteur(int idVector, int taille, double[] valeur) {
+		this.IdVector = idVector;
 		this.taille = taille;
 		this.valeur = valeur;
 	}
+	
 	
 	public int getIdVector() {
 		return IdVector;
@@ -31,6 +32,10 @@ public class Vector {
 	public void setValeur(double[] valeur) {
 		this.valeur = valeur;
 	}
+	
+	
+	
+	
 
 	
 }
