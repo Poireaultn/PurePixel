@@ -65,8 +65,8 @@ public class Vecteur {
 	    }
 	    
 	    //Fait le projeté des vecteurs centrés sur la base orthonormale
-	    public static List<Vecteur> Proj(List<Vecteur> bo, List<Vecteur> listv) {
-	        List<Vecteur> Vcont = new ArrayList<>();
+	    public static List<Vecteur> proj(List<Vecteur> bo, List<Vecteur> listv) {
+	        List<Vecteur> Vcontrib = new ArrayList<>();
 
 	        for (int k = 0; k < listv.size(); k++) {
 	            Vecteur v = listv.get(k);
@@ -78,11 +78,13 @@ public class Vecteur {
 	            }
 
 	            Vecteur contribution = new Vecteur(alpha.length, alpha);
-	            Vcont.add(contribution);
+	            Vcontrib.add(contribution);
 	        }
 
-	        return Vcont;
+	        return Vcontrib;
 	    }
+	    
+	     
 
 
 }
