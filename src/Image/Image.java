@@ -44,9 +44,9 @@ public class Image {
 	}
 
 	public void afficherMatrice() {
-		for (int y = 0; y < this.height; y++) {
+		for (int x = 0; x < this.height; x++) {
 			System.out.print("[ ");
-			for (int x = 0; x < this.width; x++) {
+			for (int y = 0; y < this.width; y++) {
 				System.out.printf("%.2f ", this.pixels[x][y]);
 			}
 			System.out.println("]");
