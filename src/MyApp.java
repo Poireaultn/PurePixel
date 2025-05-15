@@ -3,21 +3,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-public class MyFirstAppJavaFx extends Application{
+public class MyApp extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         /* donner un nom à la fenêtre */
-        primaryStage.setTitle("JusteUnBouton");
+        primaryStage.setTitle("PurePixel");
 
-        /* Création d'un bouton */
-        Button b = new Button("Clique moi !");
-
-    	
-    	b.setPrefSize(200,200);
-    	//b.setDisable(true);
-    	b.setId("myButton");
+        
     	
         /* création d'une fenêtre */
         StackPane root = new StackPane();

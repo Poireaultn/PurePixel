@@ -1,26 +1,27 @@
-package Image;
-
 public class Pos {
-	protected int x;
-	protected int y;
-	
-	public Pos(int x, int y) {
-		this.x = x;
-		this.y = y;
+    private Point2D deb;
+    private Point2D fin;
+
+    public Pos(int x1, int y1, int x2, int y2) {
+        this.deb = new Point2D(x1, y1);
+        this.fin = new Point2D(x2, y2);
+    }
+
+	public Point2D getDeb() {
+		return deb;
 	}
-	
-	public int getX() {
-		return x;
+
+	public void setDeb(Point2D deb) {
+		this.deb = deb;
 	}
-	public void setX(int x) {
-		this.x = x;
+
+	public Point2D getFin() {
+		return fin;
 	}
-	public int getY() {
-		return y;
+
+	public void setFin(Point2D fin) {
+		this.fin = fin;
 	}
-	public void setY(int y) {
-		this.y = y;
-	}
-	
-	
+
+    
 }
