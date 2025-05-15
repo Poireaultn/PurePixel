@@ -43,6 +43,14 @@ public class TestImage {
 
 	public static void main(String[] args) {
 		try {
+<<<<<<< HEAD
+			Image img = new Image("Image/lena.jpg"); // Charge l’image
+			img.afficherMatrice(); // Affiche la matrice
+			
+			img = Image.noising(img,10);
+			
+			Image.EnregistrerImage(img,"Image/test2.jpg");
+=======
 			Image img = new Image("src/Image/test.png"); // Charge l’image
 			img.afficherMatrice(); // Affiche la matrice
 				
@@ -64,6 +72,7 @@ public class TestImage {
 			// Sauvegarde de l’image résultante
 			//ImageIO.write(bi, "png", new File("src/Image/test1.png"));
 			System.out.println("Image en niveaux de gris sauvegardée.");
+>>>>>>> main
 
 			Patch.ExtractPatchs(img, 1,10);
 			
@@ -89,7 +98,11 @@ public class TestImage {
 			System.out.println("Erreur lors du traitement de l'image : " + e.getMessage());
 		}
 	}
+<<<<<<< HEAD
+}
+=======
 	
 	
 }
 
+>>>>>>> main

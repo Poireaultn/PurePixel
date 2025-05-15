@@ -42,6 +42,26 @@ public class Image {
 		}
 		return gray;
 	}
+	
+	public static void EnregistrerImage(Image img, String filePath) throws IOException {
+		int width = img.getWidth();
+		int height = img.getHeight();
+		double[][] pixels = img.getPixels(); // Récupère les pixels avec un getter
+
+		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				int gray = (int) pixels[y][x];
+				int rgb = (gray << 16) | (gray << 8) | gray;
+				bi.setRGB(x, y, rgb);
+			}
+		}
+
+		// Sauvegarde de l’image résultante
+		ImageIO.write(bi, "png", new File(filePath));
+		System.out.println("Image en niveaux de gris sauvegardée.");
+	}
 
 	public void afficherMatrice() {
 		for (int x = 0; x < this.height; x++) {
@@ -71,6 +91,35 @@ public class Image {
 	
 	public double[][] getPixels() {
 	    return this.pixels;
+	}
+	
+	public static Image noising(Image img,double ecart_type) {
+		for(int i = 0; i < img.getHeight(); i++) {
+			for(int j = 0; j < img.getWidth(); j++) {
+				// Simulation d'une loi normale centré avec l'écart type en paramètre
+				double S = 0;
+				for(int s = 0; s < 12; s++) {
+					// Simulation de loi uniforme sur [0;1]
+					double X = Math.random();
+					S = S + X;					
+				}
+				S = S - 6; // S suit une loi normale centrée réduite
+				
+				S = S*ecart_type; // S suit loi normale centrée en 0 et de variance σ²=ecart_type²
+				
+				// On ajoute le bruit gaussien
+				img.pixels[i][j]=img.pixels[i][j]+S;
+				
+				// On empêche les valeurs au dessus de 255 et en dessous de 0
+				if(img.pixels[i][j]>255) {
+					img.pixels[i][j]=255;
+				}
+				if(img.pixels[i][j]<0) {
+					img.pixels[i][j]=0;
+				}				
+			}
+		}
+		return img;
 	}
 
     public List<Image> decoupeImage(int taille, int nombre) {

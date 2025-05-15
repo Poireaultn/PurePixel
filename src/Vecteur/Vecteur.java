@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Vecteur {
+<<<<<<< HEAD
+=======
 		
+>>>>>>> main
 	    private int taille;
 	    private double[] valeur;
 	    
@@ -17,12 +20,19 @@ public class Vecteur {
 	    
 	    //Constructeur avec paramètres
 	    public Vecteur(int taille, double[] valeur) {
+<<<<<<< HEAD
+	        this.taille = taille;
+	        this.valeur = valeur;
+	    }
+
+=======
 	       
 	        this.taille = taille;
 	        this.valeur = valeur;
 	    }
 	    
 	
+>>>>>>> main
 	    //Getter et Setter taille
 	    public int getTaille() {
 	        return taille;
