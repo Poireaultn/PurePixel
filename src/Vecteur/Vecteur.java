@@ -1,32 +1,20 @@
 package Vecteur;
 
 public class Vecteur {
-		private int IDVecteur;
 	    private int taille;
 	    private double[] valeur;
 	    
 	    
 	    //Constructeur par défaut
 	    public Vecteur() {
-	        this.IDVecteur = 0;
 	        this.taille = 0;
 	        this.valeur = new double[0];
 	    }
 	    
 	    //Constructeur avec paramètres
-	    public Vecteur(int IDVecteur, int taille, double[] valeur) {
-	        this.IDVecteur = IDVecteur;
+	    public Vecteur(int taille, double[] valeur) {
 	        this.taille = taille;
 	        this.valeur = valeur;
-	    }
-	    
-	    //Getter et Setter idVecteur
-	    public int getIDVecteur() {
-	        return IDVecteur;
-	    }
-
-	    public void setIDVecteur(int IDVecteur) {
-	        this.IDVecteur = IDVecteur;
 	    }
 
 	    //Getter et Setter taille
@@ -51,7 +39,7 @@ public class Vecteur {
 	    @Override
 	    public String toString() {
 	        StringBuilder sb = new StringBuilder();
-	        sb.append("Vecteur ID: ").append(IDVecteur).append(", Taille: ").append(taille).append(", Valeurs: [");
+	        sb.append("Vecteur ID: ").append(", Taille: ").append(taille).append(", Valeurs: [");
 	        for (int i = 0; i < valeur.length; i++) {
 	            sb.append(valeur[i]);
 	            if (i < valeur.length - 1) {
