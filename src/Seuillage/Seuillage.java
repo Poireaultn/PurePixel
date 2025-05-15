@@ -9,7 +9,7 @@ public class Seuillage {
     private double seuil;
     
     // liste de tableau de double qui vont être appliqués à seuillage
-    List<double[]> ListV;
+    private List<double[]> ListV;
 
     //Constructeur
     public Seuillage(double seuil, List<double[]> ListV) {
@@ -67,20 +67,27 @@ public class Seuillage {
     	return Math.pow(sigma, 2) / sigmaX;
     }
  
-    /*
-    public List<Double> seuillageDur(){
+    // Méthode de seuillage dur
+    public List<Double[]> seuillageDur() {
+    List<Double[]> list = new ArrayList<>(); // Tableau qui stockera les valeurs après seuil
 
-        List<Double> list = new ArrayList<>();
+    for (double[] vecteur : this.ListV) {
+        Double[] modifie = new Double[vecteur.length];
 
-      
-        for (double[] tableau : this.ListV) {
-
+        for (int i = 0; i < vecteur.length; i++) {
+            if (Math.abs(vecteur[i]) > this.seuil) {
+                modifie[i] = vecteur[i];
+            } else {
+                modifie[i] = 0.0;
+            }
         }
-        
-        return list;
 
+        list.add(modifie);
     }
-    */
+
+    return list;
+    }
+
     
     
     //Méthode de seuillage doux
