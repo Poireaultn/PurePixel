@@ -154,6 +154,46 @@ public class Image {
 		return subImages;
 
     }
+
+
+	public static Image reconstructPatchs(List<Patch> patchs, int imageHeight, int imageWidth, int shift) {
+		if (patchs == null || patchs.isEmpty()) return null;
+
+	    int patchSize = patchs.get(0).getTaille(); 
+	    double[][] pixels = new double[imageHeight][imageWidth];
+	    int[][] count = new int[imageHeight][imageWidth];
+
+	    int patchIndex = 0;
+
+	    for (int y = 0; y <= imageHeight - patchSize; y += shift) {
+	        for (int x = 0; x <= imageWidth - patchSize; x += shift) {
+	            if (patchIndex >= patchs.size()) break;
+
+	            double[][] patchValues = patchs.get(patchIndex++).getValeur();
+
+	            for (int i = 0; i < patchSize; i++) {
+	                for (int j = 0; j < patchSize; j++) {
+	                    int imgY = y + i;
+	                    int imgX = x + j;
+
+	                    pixels[imgY][imgX] += patchValues[i][j];
+	                    count[imgY][imgX]++;
+	                }
+	            }
+	        }
+	    }
+
+	    
+	    for (int i = 0; i < imageHeight; i++) {
+	        for (int j = 0; j < imageWidth; j++) {
+	            if (count[i][j] > 0) {
+	                pixels[i][j] /= count[i][j];
+	            }
+	        }
+	    }
+
+	    return new Image(pixels, imageHeight, imageWidth);
+	}
 }
 
 
