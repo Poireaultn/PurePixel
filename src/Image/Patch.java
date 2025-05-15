@@ -48,6 +48,48 @@ public class Patch {
 
 		return listPatchs;
 	}
+
+	public static List<Vecteur> VectorPatchs(List<Patch> patchs) {
+			
+			List<Vecteur> vectors = new ArrayList<>();
+			
+			for (int i=0;i< patchs.size();i++){
+				
+				int taille = patchs.get(i).getTaille();
+				int id = patchs.get(i).getIdPatch();
+				double[][] matrice = patchs.get(i).getValeur();
+				double[] colonne = new double[taille*taille];
+				
+				for (int k=0;k<taille*taille;k++) {
+					colonne[k] = matrice[k/taille][k%taille];
+				}
+				Vecteur vector = new Vecteur(id,taille*taille,colonne);
+				vectors.add(vector);
+			}
+			return vectors;
+	}
+
+	public static List<Patch> PatchVectors(List<Vecteur> vecteurs) {
+		
+		List<Patch> patchs = new ArrayList<>();
+		
+		for (int i=0;i< vecteurs.size();i++){
+			
+			int taille = (int) Math.sqrt(vecteurs.get(i).getTaille());
+			int id = vecteurs.get(i).getIdVector();
+			double[] colonne = vecteurs.get(i).getValeur();
+			double[][] matrice = new double[taille][taille];
+			
+			for (int k=0;k<taille;k++) {
+				for (int j=0;j<taille;j++) {
+					matrice[k][j]=colonne[taille*k + j];
+				}
+			}
+			Patch patch = new Patch(id,taille,matrice);
+			patchs.add(patch);
+		}
+		return patchs;
+	}
 	
 
 }
