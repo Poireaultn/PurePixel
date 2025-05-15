@@ -1,6 +1,13 @@
 package Vecteur;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Vecteur {
+<<<<<<< HEAD
+=======
+		
+>>>>>>> main
 	    private int taille;
 	    private double[] valeur;
 	    
@@ -13,10 +20,19 @@ public class Vecteur {
 	    
 	    //Constructeur avec paramètres
 	    public Vecteur(int taille, double[] valeur) {
+<<<<<<< HEAD
 	        this.taille = taille;
 	        this.valeur = valeur;
 	    }
 
+=======
+	       
+	        this.taille = taille;
+	        this.valeur = valeur;
+	    }
+	    
+	
+>>>>>>> main
 	    //Getter et Setter taille
 	    public int getTaille() {
 	        return taille;
@@ -49,5 +65,36 @@ public class Vecteur {
 	        sb.append("]");
 	        return sb.toString();
 	    }
+	    
+	    public static double produitScalaire(double[] a, double[] b) {
+	    	double sum=0.0;
+	    	for (int i=0;i<a.length;i++) {
+	    		sum= sum + a[i] * b[i];
+	    	}
+	    	return sum;
+	    }
+	    
+	    //Fait le projeté des vecteurs centrés sur la base orthonormale
+	    public static List<Vecteur> proj(List<Vecteur> bo, List<Vecteur> listv) {
+	        List<Vecteur> Vcontrib = new ArrayList<>();
+
+	        for (int k = 0; k < listv.size(); k++) {
+	            Vecteur v = listv.get(k);
+	            double[] alpha = new double[bo.size()];
+
+	            for (int i = 0; i < bo.size(); i++) {
+	                Vecteur u = bo.get(i);
+	                alpha[i] = produitScalaire(u.getValeur(), v.getValeur());
+	            }
+
+	            Vecteur contribution = new Vecteur(alpha.length, alpha);
+	            Vcontrib.add(contribution);
+	        }
+
+	        return Vcontrib;
+	    }
+	    
+	     
+
 
 }
