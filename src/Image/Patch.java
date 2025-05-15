@@ -21,7 +21,8 @@ public class Patch {
 	public Integer getTaille() {
 		return this.taille;
 	}
-
+	
+	//Affiche le patch( matrice 2D)
 	public void afficherPatch() {
 	    System.out.println("Patch at position (" + pos.x + ", " + pos.y + "):");
 	    for (int y = 0; y < taille; y++) {
@@ -33,7 +34,8 @@ public class Patch {
 	    }
 	}
 
-
+	//Permet de construire une list de Patch à partir de l'image de base, le nombre de patch et leur taille
+	//le coordonnées du point haut gauche des patchs est pris aléatoirement dans l'image
 	public static ArrayList<Patch> ExtractPatchs(Image img, Integer nbPatchs, Integer patchSize) {
 		Random r = new Random();
 		ArrayList<Patch> listPatchs = new ArrayList<>();
