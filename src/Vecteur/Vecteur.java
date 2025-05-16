@@ -4,20 +4,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Vecteur {
+		private int id;
 	    private int taille;
 	    private double[] valeur;
 	    
 	    
 	    //Constructeur par défaut
 	    public Vecteur() {
+	    	this.id = 0;
 	        this.taille = 0;
 	        this.valeur = new double[0];
 	    }
 	    
 	    //Constructeur avec paramètres
-	    public Vecteur(int taille, double[] valeur) {
+	    public Vecteur(int id, int taille, double[] valeur) {
+	    	this.id = id;
 	        this.taille = taille;
 	        this.valeur = valeur;
+	    }
+	    
+	  //Constructeur avec paramètres
+	    public Vecteur(int taille, double[] valeur) {
+	    	this.id = -1;
+	        this.taille = taille;
+	        this.valeur = valeur;
+	    }
+	    
+	    //Getter et Setter ID
+	    public int getID() {
+	        return id;
+	    }
+
+	    public void setID(int id) {
+	        this.id = id;
 	    }
 
 	    //Getter et Setter taille
@@ -74,7 +93,7 @@ public class Vecteur {
 	                alpha[i] = produitScalaire(u.getValeur(), v.getValeur());
 	            }
 
-	            Vecteur contribution = new Vecteur(alpha.length, alpha);
+	            Vecteur contribution = new Vecteur(v.getID(),alpha.length, alpha);
 	            Vcontrib.add(contribution);
 	        }
 

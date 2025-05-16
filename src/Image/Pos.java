@@ -1,3 +1,5 @@
+package Image;
+
 public class Pos {
     private Point2D deb;
     private Point2D fin;
