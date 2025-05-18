@@ -6,6 +6,9 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import ACP.ACP;
+import Vecteur.Vecteur;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -192,6 +195,28 @@ public class Image {
 
 	    return new Image(pixels, imageHeight, imageWidth);
 	}
+	
+	public static Image denoisingGlobalPCA(Image imgNoisy, int patchSize, String typeSeuillage, String methodeSeuil, double sigma) {
+	    // Extraire les patchs
+	    List<Patch> patchs = Patch.ExtractPatchs(imgNoisy, patchSize);
+	    
+	    // Convertir en vecteurs
+	    List<Vecteur> vecteurs = Patch.VectorPatchs(patchs);
+	    
+	    // Appliquer le débruitage PCA
+	    ArrayList<Vecteur> vecteursArrayList = new ArrayList<>(vecteurs);
+	    List<Vecteur> vecteursDen = ACP.denoisingACP(vecteursArrayList, typeSeuillage, methodeSeuil, sigma);
+	    
+	    // Reconversion en patchs
+	    List<Patch> patchsDen = Patch.PatchVectors(vecteursDen);
+	    
+	    // Reconstruction de l'image (shift = 12, comme dans ExtractPatchs)
+	    Image imgDenoised = Image.reconstructPatchs(patchsDen, imgNoisy.getHeight(), imgNoisy.getWidth(), 12);
+	    
+	    return imgDenoised;
+	}
+
+
 }
 
 

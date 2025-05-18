@@ -80,6 +80,8 @@ public class Vecteur {
 	    	return sum;
 	    }
 	    
+	    
+	    
 	    //Fait le projeté des vecteurs centrés sur la base orthonormale
 	    public static List<Vecteur> proj(List<Vecteur> bo, List<Vecteur> listv) {
 	        List<Vecteur> Vcontrib = new ArrayList<>();

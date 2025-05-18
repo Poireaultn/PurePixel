@@ -1,6 +1,7 @@
 package Image;
 import java.util.*;
 
+import ACP.ACP;
 import Vecteur.Vecteur;
 
 public class Patch {
@@ -21,6 +22,22 @@ public class Patch {
 			}
 		}
 	}
+	
+	 // Constructeur 2 : à partir de la matrice + position explicite
+    public Patch(Integer id, Integer taille, double[][] matrice, Pos pos) {
+        if (taille <= 0) throw new IllegalArgumentException("taille doit être positive");
+        if (matrice.length != taille || matrice[0].length != taille)
+            throw new IllegalArgumentException("Dimensions matrice incorrectes");
+        this.id = id;
+        this.taille = taille;
+        this.valeur = matrice;
+        this.pos = pos;
+    }
+    
+ // Constructeur 3 : matrice sans position (pos=null)
+    public Patch(Integer id, Integer taille, double[][] matrice) {
+        this(id, taille, matrice, null);
+    }
 
 	public Integer getTaille() {
 		return this.taille;
@@ -45,6 +62,18 @@ public class Patch {
 	        System.out.println("]");
 	    }
 	}
+	
+	public Vecteur toVecteur() {
+	    double[] valeurs = new double[taille * taille];
+	    int index = 0;
+	    for (int i = 0; i < taille; i++) {
+	        for (int j = 0; j < taille; j++) {
+	            valeurs[index++] = this.valeur[i][j]; 
+	        }
+	    }
+	    return new Vecteur(this.id, valeurs.length, valeurs);
+	}
+
 
 	public static List<Vecteur> VectorPatchs(List<Patch> patchs) {
 			
@@ -88,40 +117,70 @@ public class Patch {
 		return patchs;
 	}
 
-	public static List<Patch> ExtractPatchs(Image img, int taille){
-		//Random random = new Random();
-		List<Patch> patchs = new ArrayList<>();
-		List<Integer> shift_possible = new ArrayList<>();
-		
-		int height = img.getHeight();
-		int width = img.getWidth();
-		int indice = 0;
-		for (int i = 1; i <= Math.max(Math.sqrt(height-taille),Math.sqrt(width-taille)); i++) {
-	        if ((height-taille) % i == 0 || (width-taille) % i == 0){
+	public static List<Patch> ExtractPatchs(Image img, int taille) {
+	    List<Patch> patchs = new ArrayList<>();
+	    List<Integer> shift_possible = new ArrayList<>();
+
+	    int height = img.getHeight();
+	    int width = img.getWidth();
+	    int indice = 0;
+
+	    // Vérification des dimensions de l'image
+	    if (height < taille || width < taille) {
+	        throw new IllegalArgumentException("L'image est trop petite pour des patchs de taille " + taille);
+	    }
+
+	    // Recherche de shifts possibles
+	    for (int i = 1; i <= Math.max(Math.sqrt(height - taille), Math.sqrt(width - taille)); i++) {
+	        if ((height - taille) % i == 0 || (width - taille) % i == 0) {
 	            shift_possible.add(i);
 	        }
 	    }
-		int shift = 12;  //soit le max : Collections.max(shift_possible) ; soit aléatoire : //shift_possible.get(random.nextInt(shift_possible.size()));
-		double[][] pixels = img.getPixels();
-		
-		for (int i=0;i<=height-taille; i+=shift) {
-			for (int j=0;j<=width-taille; j+=shift) {
-				
-				double[][] matrice = new double[taille][taille];
-				for (int k=0;k<taille; k++) {
-					for (int l=0;l<taille; l++) {
-						matrice[l][k] = pixels[i+l][j+k];
-					}
-				}
-				
-				Patch patch = new Patch(indice, taille,matrice);
-				indice +=1;
-				patchs.add(patch);
-				
-			}
-		}		
-		return patchs;
+
+	    if (shift_possible.isEmpty()) {
+	        throw new IllegalArgumentException("Aucun shift valide trouvé pour taille=" + taille + ", image=" + height + "x" + width);
+	    }
+
+	    int shift = Collections.max(shift_possible);
+	    System.out.println(">> Shift sélectionné : " + shift);
+
+	    double[][] pixels = img.getPixels();
+
+	    for (int i = 0; i <= height - taille; i += shift) {
+	        for (int j = 0; j <= width - taille; j += shift) {
+
+	            double[][] matrice = new double[taille][taille];
+	            for (int k = 0; k < taille; k++) {
+	                for (int l = 0; l < taille; l++) {
+	                    matrice[k][l] = pixels[i + k][j + l];  // [k][l] ici (et pas [l][k])
+	                }
+	            }
+
+	            Patch patch = new Patch(indice, taille, matrice);
+	            indice++;
+	            patchs.add(patch);
+	        }
+	    }
+	    
+	    // Vérification debug
+	    if (!patchs.isEmpty()) {
+	        int tailleVecteur = patchs.get(0).toVecteur().getTaille(); // suppose que tu as cette méthode
+	        System.out.println(">> Nombre de patchs extraits : " + patchs.size());
+	        System.out.println(">> Taille d’un patch (vecteur) : " + tailleVecteur + " (doit être " + (taille * taille) + ")");
+	        if (tailleVecteur != taille * taille) {
+	            throw new RuntimeException("Taille des vecteurs incorrecte : attendu " + (taille * taille) + ", obtenu " + tailleVecteur);
+	        }
+	    } else {
+	        System.out.println("⚠ Aucun patch extrait !");
+	    }
+
+
+	    
+	    return patchs;
 	}
+
+	
+
 	
 
 }

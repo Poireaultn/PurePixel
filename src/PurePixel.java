@@ -56,31 +56,58 @@ public class PurePixel {
               break;
 
 		case 2:
-		    System.out.println("Vous avez choisi le débruitage.");
+			System.out.println("Vous avez choisi le débruitage.");
 
-		    // Afficher les images disponibles
-		    for (int i = 0; i < tab.length; i++) {
-		        System.out.println(i + " : " + tab[i]);
-		    }
+			// Afficher les images disponibles
+			for (int i = 0; i < tab.length; i++) {
+			    System.out.println(i + " : " + tab[i]);
+			}
 
-		    System.out.print("Choisissez une image à débruiter : ");
-		    choixImage = sc.nextInt();
-		    System.out.println("Tu as choisi cette image : " + tab[choixImage]);
+			System.out.print("Choisissez une image à débruiter : ");
+			choixImage = sc.nextInt();
+			System.out.println("Tu as choisi cette image : " + tab[choixImage]);
 
-		    String cheminBruitee = filename + "/" + tab[choixImage];
+			String cheminBruitee = filename + "/" + tab[choixImage];
 
-		    try {
-		        Image imgBruitée = new Image(cheminBruitee);
+			System.out.println("Choisissez le type de méthode de débruitage :");
+			System.out.println("1 : Méthode globale");
+			System.out.println("2 : Méthode locale");
+			int choixMethode = sc.nextInt();
 
-		      // appeler denoising ici ( à créer)
-		        
-		        Image.EnregistrerImage(imgDebruitee, "src/Image/Resultats/image_debruitee.png");
+			System.out.println("Choisissez le type de seuillage :");
+			System.out.println("1 : Seuillage dur");
+			System.out.println("2 : Seuillage doux");
+			int choixSeuillage = sc.nextInt();
 
-		        System.out.println("Image débruitée sauvegardée dans src/Image/Resultats/image_debruitee.png");
+			try {
+			    Image imgBruitée = new Image(cheminBruitee);
+			    Image imgDebruitee = null;
+			    String typeSeuillage = (choixSeuillage == 1) ? "dur" : "dou";
+			    String methodeSeuil = "VisuShrink"; // Ou "BayesShrink" si tu veux demander aussi (à modifier)
+			    int patchSize = 8;  // taille patch par défaut, modifiable
+			    double sigma = 20.0; // écart type bruit, à ajuster ou demander à l'utilisateur
 
-		    } catch (IOException e) {
-		        System.out.println("Erreur lors du chargement ou de la sauvegarde : " + e.getMessage());
-		    }
+			    
+
+			    if (choixMethode == 1) {
+			        
+			    	imgDebruitee = Image.denoisingGlobalPCA(imgBruitée, patchSize, typeSeuillage, methodeSeuil, sigma);
+
+			    } else {
+			        System.out.println("Méthode locale non encore implémentée.");
+			        return;
+			    }
+
+			    if (imgDebruitee != null) {
+		            Image.EnregistrerImage(imgDebruitee, "src/Image/Resultats/image_debruitee.png");
+		            System.out.println("Image débruitée sauvegardée dans src/Image/Resultats/image_debruitee.png");
+		        } else {
+		            System.out.println("Échec du débruitage.");
+		        }
+
+			} catch (IOException e) {
+			    System.out.println("Erreur lors du chargement ou de la sauvegarde : " + e.getMessage());
+			}
 
 		    break;
 

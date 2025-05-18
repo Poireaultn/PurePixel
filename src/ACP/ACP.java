@@ -1,10 +1,14 @@
 package ACP;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
+
+import Seuillage.Seuillage;
+
 import org.apache.commons.math3.linear.EigenDecomposition;
 
 import Vecteur.Vecteur;
@@ -148,4 +152,100 @@ public class ACP {
 		}
 		return BaseOrthonormale;
 	}
+	
+	
+	public static ArrayList<Vecteur> denoisingACP(ArrayList<Vecteur> vecteurs, String typeSeuillage, String methodeSeuil, double sigma) {
+	    // 1. Centrage / réduction
+	    ArrayList<Vecteur> vecteursCentres = moyCov(vecteurs);
+
+	    // 2. Passage en matrice et transpose (colonnes = vecteurs)
+	    double[][] data = listToMatrice(vecteursCentres);
+	    RealMatrix X = MatrixUtils.createRealMatrix(data);
+
+	    System.out.println("X dimensions: " + X.getRowDimension() + " x " + X.getColumnDimension());
+
+	    // 3. ACP
+	    ACP acp = new ACP(vecteurs);
+	    ArrayList<Vecteur> base = acp.traitementACP(acp);
+
+	    // 4. Construction de la matrice base orthonormale B
+	    double[][] baseMatrix = new double[base.get(0).getTaille()][base.size()];
+	    for (int i = 0; i < base.size(); i++) {
+	        double[] vec = base.get(i).getValeur();
+	        for (int j = 0; j < vec.length; j++) {
+	            baseMatrix[j][i] = vec[j];
+	        }
+	    }
+	    RealMatrix B = MatrixUtils.createRealMatrix(baseMatrix);
+	    System.out.println("B dimensions: " + B.getRowDimension() + " x " + B.getColumnDimension());
+
+	    // 5. Projection dans la base ACP : coeffs = B^T * X
+	    System.out.println("Multiplying B^T (" + B.transpose().getRowDimension() + " x " + B.transpose().getColumnDimension() + ") with X (" + X.getRowDimension() + " x " + X.getColumnDimension() + ")");
+	    if (B.transpose().getColumnDimension() != X.getRowDimension()) {
+	        System.err.println("Dimension mismatch for multiplication B^T * X: " + B.transpose().getColumnDimension() + " != " + X.getRowDimension());
+	        throw new IllegalArgumentException("Dimension mismatch for multiplication B^T * X");
+	    }
+	    RealMatrix coeffs = B.transpose().multiply(X);
+
+	    // 6. Récupération des coefficients pour seuillage
+	    List<double[]> listCoeff = new ArrayList<>();
+	    for (int i = 0; i < coeffs.getColumnDimension(); i++) {
+	        double[] colonne = coeffs.getColumn(i);
+	        listCoeff.add(colonne);
+	    }
+
+	    // 7. Calcul du seuil
+	    double seuil = 0;
+	    if (methodeSeuil.equalsIgnoreCase("VisuShrink")) {
+	        int tailleImage = vecteurs.size() * vecteurs.get(0).getTaille();
+	        seuil = Seuillage.seuilV(sigma, tailleImage);
+	    } else if (methodeSeuil.equalsIgnoreCase("BayesShrink")) {
+	        seuil = Seuillage.seuilB(sigma, listCoeff);
+	    }
+
+	    // 8. Application du seuillage
+	    Seuillage seuillage = new Seuillage(seuil, listCoeff);
+	    List<double[]> coeffsSeuillees;
+	    if (typeSeuillage.equalsIgnoreCase("dur")) {
+	        List<Double[]> dure = seuillage.seuillageDur();
+	        coeffsSeuillees = new ArrayList<>();
+	        for (Double[] dtab : dure) {
+	            double[] tmp = new double[dtab.length];
+	            for (int i = 0; i < dtab.length; i++) {
+	                tmp[i] = dtab[i];
+	            }
+	            coeffsSeuillees.add(tmp);
+	        }
+	    } else { // doux
+	        coeffsSeuillees = seuillage.seuillageDoux();
+	    }
+
+	    // 9. Reconstruction de la matrice coeffs seuillees
+	    double[][] coeffsMatrix = new double[coeffsSeuillees.get(0).length][coeffsSeuillees.size()];
+	    for (int i = 0; i < coeffsSeuillees.size(); i++) {
+	        double[] col = coeffsSeuillees.get(i);
+	        for (int j = 0; j < col.length; j++) {
+	            coeffsMatrix[j][i] = col[j];
+	        }
+	    }
+	    RealMatrix coeffsSeuilleesMatrix = MatrixUtils.createRealMatrix(coeffsMatrix);
+
+	    // 10. Reconstruction de X débruité
+	    System.out.println("Multiplying B (" + B.getRowDimension() + " x " + B.getColumnDimension() + ") with coeffsSeuilleesMatrix (" + coeffsSeuilleesMatrix.getRowDimension() + " x " + coeffsSeuilleesMatrix.getColumnDimension() + ")");
+	    if (B.getColumnDimension() != coeffsSeuilleesMatrix.getRowDimension()) {
+	        System.err.println("Dimension mismatch pour multiplication B * coeffsSeuilleesMatrix: " + B.getColumnDimension() + " != " + coeffsSeuilleesMatrix.getRowDimension());
+	        throw new IllegalArgumentException("Dimension mismatch pour multiplication B * coeffsSeuilleesMatrix");
+	    }
+	    RealMatrix X_denoised = B.multiply(coeffsSeuilleesMatrix);
+
+	    // 11. Transpose et conversion en liste de vecteurs
+	    double[][] dataDenoised = X_denoised.transpose().getData();
+	    ArrayList<Vecteur> resultat = matriceToList(dataDenoised);
+
+	    return resultat;
+	}
+
+	
+	
+
 }
