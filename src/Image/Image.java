@@ -52,12 +52,14 @@ public class Image {
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
 
 		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				int gray = (int) pixels[y][x];
-				int rgb = (gray << 16) | (gray << 8) | gray;
-				bi.setRGB(x, y, rgb);
-			}
+		    for (int x = 0; x < width; x++) {
+		        int gray = (int) Math.round(pixels[y][x]);
+		        gray = Math.max(0, Math.min(255, gray));  // Clamp entre 0 et 255
+		        int rgb = (gray << 16) | (gray << 8) | gray;
+		        bi.setRGB(x, y, rgb);
+		    }
 		}
+
 
 		// Sauvegarde de l’image résultante
 		ImageIO.write(bi, "png", new File(filePath));
@@ -213,8 +215,30 @@ public class Image {
 	    // Reconstruction de l'image (shift = 12, comme dans ExtractPatchs)
 	    Image imgDenoised = Image.reconstructPatchs(patchsDen, imgNoisy.getHeight(), imgNoisy.getWidth(), 12);
 	    
-	    return imgDenoised;
+	    // ** Normalisation pour que les pixels soient entre 0 et 255 **
+	    double[][] pixels = imgDenoised.getPixels();
+	    double min = Double.MAX_VALUE;
+	    double max = Double.MIN_VALUE;
+	    
+	    // Trouver min et max dans la matrice de pixels
+	    for (int i = 0; i < imgDenoised.getHeight(); i++) {
+	        for (int j = 0; j < imgDenoised.getWidth(); j++) {
+	            if (pixels[i][j] < min) min = pixels[i][j];
+	            if (pixels[i][j] > max) max = pixels[i][j];
+	        }
+	    }
+	    
+	    // Normaliser les pixels entre 0 et 255
+	    for (int i = 0; i < imgDenoised.getHeight(); i++) {
+	        for (int j = 0; j < imgDenoised.getWidth(); j++) {
+	            pixels[i][j] = 255.0 * (pixels[i][j] - min) / (max - min);
+	        }
+	    }
+	    
+	    // Retourner une nouvelle image avec les pixels normalisés
+	    return new Image(pixels, imgDenoised.getHeight(), imgDenoised.getWidth());
 	}
+
 
 
 }

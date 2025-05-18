@@ -1,6 +1,7 @@
 package ACP;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -161,15 +162,12 @@ public class ACP {
 	    // 2. Passage en matrice et transpose (colonnes = vecteurs)
 	    double[][] data = listToMatrice(vecteursCentres);
 	    RealMatrix X = MatrixUtils.createRealMatrix(data);
-
 	    System.out.println("X dimensions: " + X.getRowDimension() + " x " + X.getColumnDimension());
 
 	    // 3. ACP
 	    ACP acp = new ACP(vecteurs);
 	    ArrayList<Vecteur> base = acp.traitementACP(acp);
-
 	    RealMatrix B = MatrixUtils.createRealMatrix(listToMatrice(base)).transpose();
-
 	    System.out.println("B dimensions: " + B.getRowDimension() + " x " + B.getColumnDimension());
 
 	    // 5. Projection dans la base ACP : coeffs = B^T * X
@@ -187,6 +185,11 @@ public class ACP {
 	        listCoeff.add(colonne);
 	    }
 
+	    // 🔍 Stats avant seuillage
+	    if (!listCoeff.isEmpty()) {
+	        printStats("Avant seuillage (1er vecteur)", listCoeff.get(0));
+	    }
+
 	    // 7. Calcul du seuil
 	    double seuil = 0;
 	    if (methodeSeuil.equalsIgnoreCase("VisuShrink")) {
@@ -195,16 +198,21 @@ public class ACP {
 	    } else if (methodeSeuil.equalsIgnoreCase("BayesShrink")) {
 	        seuil = Seuillage.seuilB(sigma, listCoeff);
 	    }
+	    System.out.println("Seuil utilisé : " + seuil);
+	    seuil *= 0.1;
 
-	 // 8. Application du seuillage
+	    // 8. Application du seuillage
 	    Seuillage seuillage = new Seuillage(seuil, listCoeff);
 	    List<double[]> coeffsSeuillees;
-	    
-	    //Seuillage dur
 	    if (typeSeuillage.equalsIgnoreCase("dur")) {
 	        coeffsSeuillees = seuillage.seuillageDur();
-	    } else { // Seuillage doux
+	    } else {
 	        coeffsSeuillees = seuillage.seuillageDoux();
+	    }
+
+	    // 🔍 Stats après seuillage
+	    if (!coeffsSeuillees.isEmpty()) {
+	        printStats("Après seuillage (1er vecteur)", coeffsSeuillees.get(0));
 	    }
 
 	    // 9. Reconstruction de la matrice coeffs seuillees
@@ -224,6 +232,13 @@ public class ACP {
 	        throw new IllegalArgumentException("Dimension mismatch pour multiplication B * coeffsSeuilleesMatrix");
 	    }
 	    RealMatrix X_denoised = B.multiply(coeffsSeuilleesMatrix);
+	    System.out.println(Arrays.toString(X_denoised.getRow(0)));
+
+	    // 🔍 Stats après reconstruction
+	    double[] allValues = Arrays.stream(X_denoised.getData())
+	            .flatMapToDouble(Arrays::stream)
+	            .toArray();
+	    printStats("Image reconstruite (X_denoised)", allValues);
 
 	    // 11. Transpose et conversion en liste de vecteurs
 	    double[][] dataDenoised = X_denoised.transpose().getData();
@@ -232,7 +247,25 @@ public class ACP {
 	    return resultat;
 	}
 
+
 	
-	
+	public static void printStats(String label, double[] data) {
+	    double min = Double.MAX_VALUE;
+	    double max = -Double.MAX_VALUE;
+	    double sum = 0;
+	    for (double v : data) {
+	        if (v < min) min = v;
+	        if (v > max) max = v;
+	        sum += v;
+	    }
+	    double mean = sum / data.length;
+	    double variance = 0;
+	    for (double v : data) variance += (v - mean) * (v - mean);
+	    variance /= data.length;
+	    double std = Math.sqrt(variance);
+	    System.out.printf("[%s] Min: %.4f, Max: %.4f, Mean: %.4f, Std: %.4f\n", label, min, max, mean, std);
+	}
+
+
 
 }
