@@ -68,11 +68,11 @@ public class Seuillage {
     }
  
     // Méthode de seuillage dur
-    public List<Double[]> seuillageDur() {
-    List<Double[]> list = new ArrayList<>(); // Tableau qui stockera les valeurs après seuil
+    public List<double[]> seuillageDur() {
+    List<double[]> list = new ArrayList<>(); // Tableau qui stockera les valeurs après seuil
 
     for (double[] vecteur : this.ListV) {
-        Double[] modifie = new Double[vecteur.length];
+        double[] modifie = new double[vecteur.length];
 
         for (int i = 0; i < vecteur.length; i++) {
             if (Math.abs(vecteur[i]) > this.seuil) {

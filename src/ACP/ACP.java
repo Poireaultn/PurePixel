@@ -168,15 +168,8 @@ public class ACP {
 	    ACP acp = new ACP(vecteurs);
 	    ArrayList<Vecteur> base = acp.traitementACP(acp);
 
-	    // 4. Construction de la matrice base orthonormale B
-	    double[][] baseMatrix = new double[base.get(0).getTaille()][base.size()];
-	    for (int i = 0; i < base.size(); i++) {
-	        double[] vec = base.get(i).getValeur();
-	        for (int j = 0; j < vec.length; j++) {
-	            baseMatrix[j][i] = vec[j];
-	        }
-	    }
-	    RealMatrix B = MatrixUtils.createRealMatrix(baseMatrix);
+	    RealMatrix B = MatrixUtils.createRealMatrix(listToMatrice(base)).transpose();
+
 	    System.out.println("B dimensions: " + B.getRowDimension() + " x " + B.getColumnDimension());
 
 	    // 5. Projection dans la base ACP : coeffs = B^T * X
@@ -203,20 +196,14 @@ public class ACP {
 	        seuil = Seuillage.seuilB(sigma, listCoeff);
 	    }
 
-	    // 8. Application du seuillage
+	 // 8. Application du seuillage
 	    Seuillage seuillage = new Seuillage(seuil, listCoeff);
 	    List<double[]> coeffsSeuillees;
+	    
+	    //Seuillage dur
 	    if (typeSeuillage.equalsIgnoreCase("dur")) {
-	        List<Double[]> dure = seuillage.seuillageDur();
-	        coeffsSeuillees = new ArrayList<>();
-	        for (Double[] dtab : dure) {
-	            double[] tmp = new double[dtab.length];
-	            for (int i = 0; i < dtab.length; i++) {
-	                tmp[i] = dtab[i];
-	            }
-	            coeffsSeuillees.add(tmp);
-	        }
-	    } else { // doux
+	        coeffsSeuillees = seuillage.seuillageDur();
+	    } else { // Seuillage doux
 	        coeffsSeuillees = seuillage.seuillageDoux();
 	    }
 

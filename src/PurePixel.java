@@ -83,7 +83,7 @@ public class PurePixel {
 			    Image imgBruitée = new Image(cheminBruitee);
 			    Image imgDebruitee = null;
 			    String typeSeuillage = (choixSeuillage == 1) ? "dur" : "dou";
-			    String methodeSeuil = "VisuShrink"; // Ou "BayesShrink" si tu veux demander aussi (à modifier)
+			    String methodeSeuil = "VisuShrink"; 
 			    int patchSize = 8;  // taille patch par défaut, modifiable
 			    double sigma = 20.0; // écart type bruit, à ajuster ou demander à l'utilisateur
 
