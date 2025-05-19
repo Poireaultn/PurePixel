@@ -8,7 +8,6 @@
 package ACP;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -207,7 +206,7 @@ public class ACP {
 	
 	   /**
      * Applique un débruitage aux vecteurs en utilisant l'ACP et un seuillage.
-     * @author Nathan Poireault
+     * @author Charles Mendiburu
      * @param vecteurs la liste des vecteurs à débruiter. Tous les vecteurs doivent avoir la même dimension.
      * @param typeSeuillage le type de seuillage à appliquer. Les valeurs possibles sont "dur" pour un seuillage dur, et toute autre valeur pour un seuillage doux.
      * @param methodeSeuil la méthode utilisée pour calculer le seuil. Les valeurs possibles sont "VisuShrink" et "BayesShrink".
@@ -246,11 +245,6 @@ public class ACP {
 	    } else {
 	        coeffsSeuillees = seuillage.seuillageDoux();
 	    }
-	   
-	    
-
-	
-
 
 	    // Stats après seuillage
 	    if (!coeffsSeuillees.isEmpty()) {
@@ -278,9 +272,6 @@ public class ACP {
 	    ArrayList<Vecteur> resultat = matriceToList(dataDenoised);
 
 	    return resultat;
-
-	    
-	   
 	}
 
 

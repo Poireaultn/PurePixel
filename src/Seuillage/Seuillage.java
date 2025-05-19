@@ -5,13 +5,30 @@ import java.util.ArrayList;
 
 import Vecteur.Vecteur;
 
+/**
+ * Classe permettant d'appliquer différents types de seuillages (dur et doux)
+ * sur des vecteurs de coefficients (par exemple issus d'une décomposition en ACP).
+ * Fournit également les méthodes de calcul de seuils VisuShrink et BayesShrink.
+ * 
+ * Cette classe est utilisée pour le débruitage d'images en utilisant des techniques
+ * 
+ * 
+ * @author Alaia, Hichem
+ * @version 1.0
+ * 
+ */
 public class Seuillage {
     
     private double seuil;
     
     private List<Vecteur> listV;  // Liste des vecteurs à seuiller
 
-    // Constructeur
+    /**
+     * Constructeur de la classe Seuillage.
+     *
+     * @param seuil Seuil à appliquer aux coefficients.
+     * @param ListV Liste de vecteurs de coefficients.
+     */
     public Seuillage(double seuil, List<Vecteur> coeffs) {
         this.seuil = seuil;
         this.listV = coeffs;
@@ -34,12 +51,24 @@ public class Seuillage {
         this.listV = listV;
     }
 
-    // Méthode pour calculer le seuil VisuShrink
+    /**
+     * Calcule le seuil VisuShrink.
+     *
+     * @param sigma       Bruit estimé (sigma).
+     * @param tailleImage Nombre total de pixels ou de coefficients.
+     * @return Seuil calculé.
+     */
     public static double seuilV(double sigma, int tailleImage) {
         return sigma * Math.sqrt(2 * Math.log(tailleImage));
     }
     
-    // Méthode pour calculer le seuil BayesShrink
+    /**
+     * Calcule le seuil BayesShrink.
+     *
+     * @param sigma          Bruit estimé (sigma).
+     * @param listeVecteurs  Liste des vecteurs de coefficients.
+     * @return Seuil adaptatif selon la variance de l'image.
+     */
     public static double seuilB(double sigma, List<Vecteur> listeVecteurs) {
         double somme = 0.0;
         int nbVal = 0;
@@ -63,7 +92,11 @@ public class Seuillage {
     }
 
 
-    // Méthode de seuillage dur
+    /**
+     * Applique un seuillage dur à tous les vecteurs : les valeurs en-dessous du seuil deviennent 0.
+     *
+     * @return Liste des vecteurs après seuillage dur.
+     */
     public List<Vecteur> seuillageDur() {
         List<Vecteur> resultat = new ArrayList<>();
 
@@ -87,7 +120,12 @@ public class Seuillage {
         return resultat;
     }
 
-    // Méthode de seuillage doux
+    /**
+     * Applique un seuillage doux à tous les vecteurs :
+     * les valeurs en-dessous du seuil deviennent 0, les autres sont réduites du seuil.
+     *
+     * @return Liste des vecteurs après seuillage doux.
+     */
     public List<Vecteur> seuillageDoux() {
         List<Vecteur> resultat = new ArrayList<>();
 

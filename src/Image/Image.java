@@ -12,11 +12,26 @@ import javax.imageio.ImageIO;
 import ACP.ACP;
 import Vecteur.Vecteur;
 
+/**
+ * Représente une image en niveaux de gris avec des opérations de traitement
+ * comme l'ajout de bruit, la découpe en sous-images et le débruitage par ACP.
+ * 
+ * Cette classe sert de base pour toutes les opérations principales sur l'image.
+ * 
+ * @author Charles, Hichem, Ilyas, Nathan
+ * @version 1.0
+ */
 public class Image {
     private double[][] pixels;
     private int height;
     private int width;
-
+    
+    /**
+     * Crée une image à partir d'un fichier image (JPEG, PNG...).
+     *
+     * @param filePath Le chemin du fichier image.
+     * @throws IOException Si le fichier ne peut pas être lu.
+     */
     public Image(String filePath) throws IOException {
         BufferedImage bufferedImage = ImageIO.read(new File(filePath));
         this.width = bufferedImage.getWidth();
@@ -28,7 +43,13 @@ public class Image {
             this.pixels = toMatrix(bufferedImage); // conversion RGB → gris sinon
         }
     }
-
+    
+    /**
+     * Récupére les valeurs des pixels de l'image qui sont déjà en niveau de gris.
+     *
+     * @param image Notre image.
+     * @return Les pixels de l'image en niveau de gris.
+     */
     private double[][] toGrayMatrix(BufferedImage image) {
         double[][] gray = new double[this.height][this.width];
         for (int y = 0; y < this.height; y++) {
@@ -40,13 +61,25 @@ public class Image {
         return gray;
     }
 
-
+    /**
+     * Crée une image à partir d'une matrice.
+     *
+     * @param pixels La matrice de pixels de l'image.
+     * @param height La hauteur de l'image.
+     * @param width La largeur de l'image.
+     */
     public Image(double[][] pixels, int height, int width) {
         this.pixels = pixels;
         this.height = height;
         this.width = width;
     }
-
+    
+    /**
+     * Récupére les valeurs des pixels de l'image et les transforme en niveau de gris.
+     *
+     * @param image Notre image.
+     * @return Les pixels de l'image en niveau de gris.
+     */
     private double[][] toMatrix(BufferedImage image) {
         double[][] gray = new double[this.height][this.width];
         for (int y = 0; y < this.height; y++) {
@@ -60,7 +93,14 @@ public class Image {
         }
         return gray;
     }
-
+    
+    /**
+     * Enregistre une image au format PNG à partir d'une instance Image.
+     *
+     * @param img      L'image à sauvegarder.
+     * @param filePath Le chemin du fichier de sortie.
+     * @throws IOException Si une erreur d'écriture survient.
+     */
     public static void EnregistrerImage(Image img, String filePath) throws IOException {
         int width = img.getWidth();
         int height = img.getHeight();
@@ -98,7 +138,10 @@ public class Image {
         ImageIO.write(bi, "png", new File(filePath));
         System.out.println("Image en niveaux de gris sauvegardée dans : " + filePath);
     }
-
+    
+    /**
+     * Affiche la matrice des pixels dans la console.
+     */
     public void afficherMatrice() {
         for (int x = 0; x < this.height; x++) {
             System.out.print("[ ");
@@ -129,9 +172,13 @@ public class Image {
         return this.pixels;
     }
 
-
-
-	
+    /**
+     * Ajoute du bruit gaussien à une image.
+     *
+     * @param img         L'image d'origine.
+     * @param ecart_type  L'écart-type du bruit (sigma).
+     * @return L'image bruitée.
+     */
 	public static Image noising(Image img,double ecart_type) {
 		for(int i = 0; i < img.getHeight(); i++) {
 			for(int j = 0; j < img.getWidth(); j++) {
@@ -160,7 +207,14 @@ public class Image {
 		}
 		return img;
 	}
-
+	
+	/**
+     * Découpe l'image en sous-images carrées de taille donnée.
+     *
+     * @param taille Taille d'un bloc carré (ex : 128x128).
+     * @param nombre Nombre maximum de sous-images à extraire.
+     * @return Liste de sous-images.
+     */
     public List<Image> decoupeImage(int taille, int nombre) {
         List<Image> subImages = new ArrayList<>();
         int rows = (int) Math.ceil((double) this.height / taille);
@@ -194,7 +248,15 @@ public class Image {
 
     }
 
-
+    /**
+     * Reconstitue une image à partir de patches en moyennant les zones qui se recouvrent.
+     *
+     * @param patchs      Liste des patches.
+     * @param imageHeight Hauteur de l'image finale.
+     * @param imageWidth  Largeur de l'image finale.
+     * @param shift       Décalage entre deux patches.
+     * @return Image reconstruite.
+     */
 	public static Image reconstructPatchs(List<Patch> patchs, int imageHeight, int imageWidth, int shift) {
 		if (patchs == null || patchs.isEmpty()) return null;
 
@@ -221,7 +283,6 @@ public class Image {
 	            }
 	        }
 	    }
-
 	    
 	    for (int i = 0; i < imageHeight; i++) {
 	        for (int j = 0; j < imageWidth; j++) {
@@ -235,13 +296,19 @@ public class Image {
 	        }
 	    }
 
-
 	    return new Image(pixels, imageHeight, imageWidth);
 	}
 	
-	
-
-	
+	/**
+     * Applique un débruitage global par ACP sur l'image.
+     *
+     * @param imgNoisy       Image bruitée.
+     * @param patchSize      Taille des patches.
+     * @param typeSeuillage  Type de seuillage.
+     * @param methodeSeuil   Méthode de calcul du seuil.
+     * @param sigma          Bruit estimé (sigma).
+     * @return Image débruitée.
+     */
 	public static Image denoisingGlobalPCA(Image imgNoisy, int patchSize, String typeSeuillage, String methodeSeuil, double sigma) {
 	    // 1. Calculer le shift adapté
 	    int shift = Patch.calculerShift(imgNoisy, patchSize);

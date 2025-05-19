@@ -3,27 +3,47 @@ package Vecteur;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe représentant un vecteur numérique avec identifiant, taille et contenu.
+ * Utilisé pour la manipulation de données sous forme de vecteurs, notamment dans les algorithmes d'ACP.
+ * 
+ * Cette classe permet de créer des vecteurs, d'accéder à leurs valeurs et de calculer le produit scalaire entre deux vecteurs.
+ * 
+ * @author Alaia
+ * 
+ * @version 1.0
+ */
 public class Vecteur {
 		private int id;
 	    private int taille;
 	    private double[] valeur;
 	    
 	    
-	    //Constructeur par défaut
+	    /**
+	     * Constructeur par défaut (vecteur vide).
+	     */
 	    public Vecteur() {
 	    	this.id = 0;
 	        this.taille = 0;
 	        this.valeur = new double[0];
 	    }
 	    
-	    //Constructeur avec paramètres
+	    /**
+	     * Constructeur avec identifiant.
+	     *
+	     * @param id     Identifiant du vecteur.
+	     * @param taille Taille du vecteur.
+	     * @param valeur Tableau des valeurs du vecteur.
+	     */
 	    public Vecteur(int id, int taille, double[] valeur) {
 	    	this.id = id;
 	        this.taille = taille;
 	        this.valeur = valeur;
 	    }
 	    
-	  //Constructeur avec paramètres
+	    /**
+	     * Constructeur sans identifiant explicite (id = -1).
+	     */
 	    public Vecteur(int taille, double[] valeur) {
 	    	this.id = -1;
 	        this.taille = taille;
@@ -57,7 +77,9 @@ public class Vecteur {
 	        this.valeur = valeur;
 	    }
 	    
-	    
+	    /**
+	     * Affiche une représentation textuelle du vecteur.
+	     */
 	    @Override
 	    public String toString() {
 	        StringBuilder sb = new StringBuilder();
@@ -72,6 +94,13 @@ public class Vecteur {
 	        return sb.toString();
 	    }
 	    
+	    /**
+	     * Calcule le produit scalaire entre deux tableaux.
+	     *
+	     * @param a Premier vecteur.
+	     * @param b Deuxième vecteur.
+	     * @return Produit scalaire des deux vecteurs.
+	     */
 	    public static double produitScalaire(double[] a, double[] b) {
 	    	double sum=0.0;
 	    	for (int i=0;i<a.length;i++) {
@@ -82,7 +111,13 @@ public class Vecteur {
 	    
 	    
 	    
-	    //Fait le projeté des vecteurs centrés sur la base orthonormale
+	    /**
+	     * Projette une liste de vecteurs sur une base orthonormale.
+	     *
+	     * @param bo    Base orthonormale.
+	     * @param listv Liste de vecteurs à projeter.
+	     * @return Liste de vecteurs projetés (contributions).
+	     */
 	    public static List<Vecteur> proj(List<Vecteur> bo, List<Vecteur> listv) {
 	        List<Vecteur> Vcontrib = new ArrayList<>();
 
