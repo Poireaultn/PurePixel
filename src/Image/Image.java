@@ -219,11 +219,11 @@ public class Image {
 	    List<Vecteur> vecteurs = Patch.VectorPatchs(patchs);
 	    
 	    // 4. Appliquer le débruitage PCA
-	    //ArrayList<Vecteur> vecteursArrayList = new ArrayList<>(vecteurs);
-	    //List<Vecteur> vecteursDen = ACP.denoisingACP(vecteursArrayList, typeSeuillage, methodeSeuil, sigma);
-	    
+	    ArrayList<Vecteur> vecteursArrayList = new ArrayList<>(vecteurs);
+	    List<Vecteur> vecteursDen = ACP.denoisingACP(vecteursArrayList, typeSeuillage, methodeSeuil, sigma);
+	    System.out.println("test");
 	    // 5. Reconversion des vecteurs débruités en patchs
-	    List<Patch> patchsDen = Patch.PatchVectors(vecteurs);
+	    List<Patch> patchsDen = Patch.PatchVectors(vecteursDen);
 	    
 	    // 6. Reconstruction de l’image en utilisant le même shift que celui utilisé pour extraire les patchs
 	    Image imgDenoised = Image.reconstructPatchs(patchsDen, imgNoisy.getHeight(), imgNoisy.getWidth(), shift);

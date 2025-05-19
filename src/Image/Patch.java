@@ -97,6 +97,10 @@ public class Patch {
         return vectors;
     }
 
+    /*
+     * Met une liste de vecteur de patchs
+     * 
+     */
     public static List<Patch> PatchVectors(List<Vecteur> vecteurs) {
         List<Patch> patchs = new ArrayList<>();
         for (Vecteur v : vecteurs) {
