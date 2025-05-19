@@ -10,6 +10,7 @@ import ACP.ACP;
 import Vecteur.Vecteur;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Image {
@@ -191,51 +192,61 @@ public class Image {
 	        for (int j = 0; j < imageWidth; j++) {
 	            if (count[i][j] > 0) {
 	                pixels[i][j] /= count[i][j];
+	            } else {
+	                // Avertissement si un pixel n’a jamais été couvert
+	              
+	                pixels[i][j] = 0; // Valeur par défaut (noir)
 	            }
 	        }
 	    }
 
+
 	    return new Image(pixels, imageHeight, imageWidth);
 	}
 	
+	
+
+	
 	public static Image denoisingGlobalPCA(Image imgNoisy, int patchSize, String typeSeuillage, String methodeSeuil, double sigma) {
-	    // Extraire les patchs
-	    List<Patch> patchs = Patch.ExtractPatchs(imgNoisy, patchSize);
+	    // 1. Calculer le shift adapté
+	    int shift = Patch.calculerShift(imgNoisy, patchSize);
+	    System.out.println("Taille shift" + shift);
+	    System.out.println("Taille Patch" + patchSize);
+	    // 2. Extraire les patchs avec ce shift
+	    List<Patch> patchs = Patch.ExtractPatchs(imgNoisy, patchSize, shift);
 	    
-	    // Convertir en vecteurs
+	    // 3. Convertir les patchs en vecteurs
 	    List<Vecteur> vecteurs = Patch.VectorPatchs(patchs);
 	    
-	    // Appliquer le débruitage PCA
-	    ArrayList<Vecteur> vecteursArrayList = new ArrayList<>(vecteurs);
-	    List<Vecteur> vecteursDen = ACP.denoisingACP(vecteursArrayList, typeSeuillage, methodeSeuil, sigma);
+	    // 4. Appliquer le débruitage PCA
+	    //ArrayList<Vecteur> vecteursArrayList = new ArrayList<>(vecteurs);
+	    //List<Vecteur> vecteursDen = ACP.denoisingACP(vecteursArrayList, typeSeuillage, methodeSeuil, sigma);
 	    
-	    // Reconversion en patchs
-	    List<Patch> patchsDen = Patch.PatchVectors(vecteursDen);
+	    // 5. Reconversion des vecteurs débruités en patchs
+	    List<Patch> patchsDen = Patch.PatchVectors(vecteurs);
 	    
-	    // Reconstruction de l'image (shift = 12, comme dans ExtractPatchs)
-	    Image imgDenoised = Image.reconstructPatchs(patchsDen, imgNoisy.getHeight(), imgNoisy.getWidth(), 12);
+	    // 6. Reconstruction de l’image en utilisant le même shift que celui utilisé pour extraire les patchs
+	    Image imgDenoised = Image.reconstructPatchs(patchsDen, imgNoisy.getHeight(), imgNoisy.getWidth(), shift);
 	    
-	    // ** Normalisation pour que les pixels soient entre 0 et 255 **
+	    // 7. Normaliser l’image pour que les pixels soient entre 0 et 255
 	    double[][] pixels = imgDenoised.getPixels();
 	    double min = Double.MAX_VALUE;
 	    double max = Double.MIN_VALUE;
-	    
-	    // Trouver min et max dans la matrice de pixels
+
 	    for (int i = 0; i < imgDenoised.getHeight(); i++) {
 	        for (int j = 0; j < imgDenoised.getWidth(); j++) {
 	            if (pixels[i][j] < min) min = pixels[i][j];
 	            if (pixels[i][j] > max) max = pixels[i][j];
 	        }
 	    }
-	    
-	    // Normaliser les pixels entre 0 et 255
+
 	    for (int i = 0; i < imgDenoised.getHeight(); i++) {
 	        for (int j = 0; j < imgDenoised.getWidth(); j++) {
 	            pixels[i][j] = 255.0 * (pixels[i][j] - min) / (max - min);
 	        }
 	    }
-	    
-	    // Retourner une nouvelle image avec les pixels normalisés
+
+	    // 8. Retourner la nouvelle image normalisée
 	    return new Image(pixels, imgDenoised.getHeight(), imgDenoised.getWidth());
 	}
 

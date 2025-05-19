@@ -107,8 +107,8 @@ public class ACP {
 		RealMatrix matrice = MatrixUtils.createRealMatrix(MatriceCentree);
 		
 		// On calcule la matrice de covariance
-		RealMatrix matriceTransposee = matrice.transpose();	// matrice transposée des vecteurs 
-		RealMatrix covariance = matrice.multiply(matriceTransposee);	// produit de la matrice des vecteurs avec la matrice transposée des vecteurs 
+		RealMatrix covariance = matrice.transpose().multiply(matrice).scalarMultiply(1.0 / matrice.getRowDimension());
+
 		
 		this.covariance = covariance;
 		this.vecteursCentres = matrice;
@@ -172,11 +172,15 @@ public class ACP {
 
 	    // 5. Projection dans la base ACP : coeffs = B^T * X
 	    System.out.println("Multiplying B^T (" + B.transpose().getRowDimension() + " x " + B.transpose().getColumnDimension() + ") with X (" + X.getRowDimension() + " x " + X.getColumnDimension() + ")");
-	    if (B.transpose().getColumnDimension() != X.getRowDimension()) {
-	        System.err.println("Dimension mismatch for multiplication B^T * X: " + B.transpose().getColumnDimension() + " != " + X.getRowDimension());
-	        throw new IllegalArgumentException("Dimension mismatch for multiplication B^T * X");
+	    if (X.getColumnDimension() != B.transpose().getRowDimension()) {
+	        System.err.println("Dimension mismatch for multiplication X * B^T: " + X.getColumnDimension() + " != " + B.transpose().getRowDimension());
+	        throw new IllegalArgumentException("Dimension mismatch for multiplication X * B^T");
 	    }
-	    RealMatrix coeffs = B.transpose().multiply(X);
+
+	    
+	    RealMatrix coeffs = X.multiply(B.transpose());
+
+
 
 	    // 6. Récupération des coefficients pour seuillage
 	    List<double[]> listCoeff = new ArrayList<>();
