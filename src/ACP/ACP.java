@@ -71,10 +71,10 @@ public class ACP {
 
 	
 	/**
-     * Centre et réduit les vecteurs d'une liste.
+     * Centre les vecteurs d'une liste.
      * @author Nathan Poireault
-     * @param vecteurs la liste de vecteurs à centrer et réduire
-     * @return une nouvelle liste de vecteurs centrés et réduits
+     * @param vecteurs la liste de vecteurs à centrer
+     * @return une nouvelle liste de vecteurs centrés
      */
 	public static ArrayList<Vecteur> moyCov(ArrayList<Vecteur> vecteurs) {
 		int nbVecteurs = vecteurs.size(); // nombre de colonnes
@@ -93,27 +93,14 @@ public class ACP {
 	        }
 	        moyenne[j] = somme / nbVecteurs;
 	    }
-
-	    // Calcul des écarts-types
-	    for (int j = 0; j < tailleVecteur; j++) {
-	        double somme = 0;
-	        for (int i = 0; i < nbVecteurs; i++) {
-	            double diff = matrice[i][j] - moyenne[j];
-	            somme += diff * diff;
-	        }
-	        ecart_type[j] = Math.sqrt(somme / (nbVecteurs - 1));
-	        if (ecart_type[j] == 0) {
-	            ecart_type[j] = 1; // éviter division par zéro
-	        }
-	    }
-
+	    
 	    // Construction de la liste centrée-réduite
 	    ArrayList<Vecteur> resultat = new ArrayList<Vecteur>();
 
 	    for (int i = 0; i < nbVecteurs; i++) {
 	        double[] valeurs = new double[tailleVecteur];
 	        for (int j = 0; j < tailleVecteur; j++) {
-	            valeurs[j] = (matrice[i][j] - moyenne[j]) / ecart_type[j];
+	            valeurs[j] = (matrice[i][j] - moyenne[j]);
 	        }
 	        Vecteur nouveau = new Vecteur(vecteurs.get(i).getID(), tailleVecteur, valeurs);
 	        resultat.add(nouveau);
@@ -206,7 +193,7 @@ public class ACP {
 	
 	   /**
      * Applique un débruitage aux vecteurs en utilisant l'ACP et un seuillage.
-     * @author Charles Mendiburu
+     * @author Charles Mendiburu, Nathan Poireault
      * @param vecteurs la liste des vecteurs à débruiter. Tous les vecteurs doivent avoir la même dimension.
      * @param typeSeuillage le type de seuillage à appliquer. Les valeurs possibles sont "dur" pour un seuillage dur, et toute autre valeur pour un seuillage doux.
      * @param methodeSeuil la méthode utilisée pour calculer le seuil. Les valeurs possibles sont "VisuShrink" et "BayesShrink".
@@ -277,7 +264,7 @@ public class ACP {
 
 	 /**
      * Affiche les statistiques de base d'un tableau de nombres à virgule flottante.
-     * @author Nathan Poireault
+     * @author Charles Mendiburu
      * @param label une chaîne de caractères descriptive pour identifier les statistiques affichées.
      * @param data le tableau de nombres à virgule flottante pour lequel calculer et afficher les statistiques.
      */
