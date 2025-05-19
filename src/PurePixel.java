@@ -113,7 +113,7 @@ public class PurePixel {
 			    String typeSeuillage = (choixSeuillage == 1) ? "dur" : "doux";
 			    String methodeSeuil = "VisuShrink"; 
 			    int patchSize = 8;  // taille patch par défaut, modifiable
-			    double sigma = 0.1; // écart type bruit, à ajuster ou demander à l'utilisateur
+			    double sigma = Math.sqrt(50); // écart type bruit, à ajuster ou demander à l'utilisateur
 
 			    
 
