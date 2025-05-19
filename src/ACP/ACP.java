@@ -1,3 +1,10 @@
+/**
+ * Classe permettant de réaliser une Analyse en Composantes Principales (ACP) sur un ensemble de vecteurs.
+ * Elle propose également des méthodes pour le traitement de données telles que la conversion de listes en matrices, le centrage-réduction, et le débruitage par seuillage.
+ * @author Nathan Poireault
+ * @version 1.0
+ */
+
 package ACP;
 
 import java.util.ArrayList;
@@ -18,7 +25,12 @@ public class ACP {
 	private RealMatrix covariance;
 	private RealMatrix vecteursCentres;
 	
-	// Fonction qui permet de transformer une liste de vecteurs en matrice
+	 /**
+     * Transforme une liste de vecteurs en une matrice 2D.
+     * @author Nathan Poireault
+     * @param ListeVecteurs la liste de vecteurs à transformer
+     * @return une matrice contenant les valeurs des vecteurs
+     */
 	public static double[][] listToMatrice(ArrayList<Vecteur> ListeVecteurs) {
 		int nblignes = ListeVecteurs.size();
 		int nbcolonnes = ListeVecteurs.get(0).getTaille();
@@ -36,7 +48,12 @@ public class ACP {
 	    return matrice;
 	}
 	
-	// Fonction qui permet de transformer une matrice en une liste de vecteurs
+	 /**
+     * Transforme une matrice en une liste de vecteurs.
+     * @author Nathan Poireault
+     * @param matrice la matrice à transformer
+     * @return une liste de vecteurs contenant les lignes de la matrice
+     */
 	public static ArrayList<Vecteur> matriceToList(double[][] matrice) {
 		int nblignes = matrice.length;
 		ArrayList<Vecteur> listeVecteur = new ArrayList<Vecteur>();
@@ -48,7 +65,12 @@ public class ACP {
 	    return listeVecteur;
 	}
 	
-	// Fonction qui permet de centrer et réduire les variables
+	/**
+     * Centre et réduit les vecteurs d'une liste.
+     * @author Nathan Poireault
+     * @param vecteurs la liste de vecteurs à centrer et réduire
+     * @return une nouvelle liste de vecteurs centrés et réduits
+     */
 	public static ArrayList<Vecteur> moyCov(ArrayList<Vecteur> vecteurs) {
 		int nbVecteurs = vecteurs.size(); // nombre de colonnes
 		int tailleVecteur = vecteurs.get(0).getValeur().length; // nombre de lignes
@@ -114,25 +136,48 @@ public class ACP {
 		this.vecteursCentres = matrice;
 	}
 	
-	//Getter et Setter de la Covariance
+	 /**
+     * Getter pour la matrice de covariance.
+     *
+     * @return La matrice de covariance
+     */
 	public RealMatrix getCovariance() {
 		return covariance;
 	}
 
+	/**
+     * Setter pour la matrice de covariance.
+     *
+     * @param covariance La nouvelle matrice de covariance
+     */
 	public void setCovariance(RealMatrix covariance) {
 		this.covariance = covariance;
 	}
 	
-	//Getter et Setter des vecteursCentres
+	/**
+     * Getter pour les vecteurs centrés.
+     *
+     * @return La matrice des vecteurs centrés
+     */
 	public RealMatrix getVecteursCentres() {
 		return vecteursCentres;
 	}
 
+	 /**
+     * Setter pour les vecteurs centrés.
+     *
+     * @param vecteursCentres La nouvelle matrice des vecteurs centrés
+     */
 	public void setVecteursCentres(RealMatrix vecteursCentres) {
 		this.vecteursCentres = vecteursCentres;
 	}
 	
-	// Fonction qui réalise une ACP
+	 /**
+     * Fonction qui réalise une ACP.
+     * @author Nathan Poireault
+     * @param monACP l'objet sur lequel effectuer l'analyse. La matrice de covariance de cet objet sera utilisée pour la décomposition en valeurs propres.
+     * @return une liste d'objets représentant la base orthonormale (vecteurs propres) de la matrice de covariance.
+     */
 	public ArrayList<Vecteur> traitementACP(ACP monACP) {	
 		// On décompose la matrice de covariance
 		EigenDecomposition eigenDecomposition = new EigenDecomposition(monACP.getCovariance());
@@ -154,7 +199,15 @@ public class ACP {
 		return BaseOrthonormale;
 	}
 	
-	
+	   /**
+     * Applique un débruitage aux vecteurs en utilisant l'ACP et un seuillage.
+     * @author Nathan Poireault
+     * @param vecteurs la liste des vecteurs à débruiter. Tous les vecteurs doivent avoir la même dimension.
+     * @param typeSeuillage le type de seuillage à appliquer. Les valeurs possibles sont "dur" pour un seuillage dur, et toute autre valeur pour un seuillage doux.
+     * @param methodeSeuil la méthode utilisée pour calculer le seuil. Les valeurs possibles sont "VisuShrink" et "BayesShrink".
+     * @param sigma une estimation de l'écart-type du bruit. Cette valeur est utilisée dans le calcul du seuil.
+     * @return une nouvelle liste d'objets représentant les vecteurs débruités.
+     */
 	public static ArrayList<Vecteur> denoisingACP(ArrayList<Vecteur> vecteurs, String typeSeuillage, String methodeSeuil, double sigma) {
 	    // 1. Centrage / réduction
 	    ArrayList<Vecteur> vecteursCentres = moyCov(vecteurs);
@@ -189,7 +242,7 @@ public class ACP {
 	        listCoeff.add(colonne);
 	    }
 
-	    // 🔍 Stats avant seuillage
+	    // Stats avant seuillage
 	    if (!listCoeff.isEmpty()) {
 	        printStats("Avant seuillage (1er vecteur)", listCoeff.get(0));
 	    }
@@ -214,7 +267,7 @@ public class ACP {
 	        coeffsSeuillees = seuillage.seuillageDoux();
 	    }
 
-	    // 🔍 Stats après seuillage
+	    // Stats après seuillage
 	    if (!coeffsSeuillees.isEmpty()) {
 	        printStats("Après seuillage (1er vecteur)", coeffsSeuillees.get(0));
 	    }
@@ -238,7 +291,7 @@ public class ACP {
 	    RealMatrix X_denoised = B.multiply(coeffsSeuilleesMatrix);
 	    System.out.println(Arrays.toString(X_denoised.getRow(0)));
 
-	    // 🔍 Stats après reconstruction
+	    // Stats après reconstruction
 	    double[] allValues = Arrays.stream(X_denoised.getData())
 	            .flatMapToDouble(Arrays::stream)
 	            .toArray();
@@ -252,7 +305,12 @@ public class ACP {
 	}
 
 
-	
+	 /**
+     * Affiche les statistiques de base d'un tableau de nombres à virgule flottante.
+     * @author Nathan Poireault
+     * @param label une chaîne de caractères descriptive pour identifier les statistiques affichées.
+     * @param data le tableau de nombres à virgule flottante pour lequel calculer et afficher les statistiques.
+     */
 	public static void printStats(String label, double[] data) {
 	    double min = Double.MAX_VALUE;
 	    double max = -Double.MAX_VALUE;
