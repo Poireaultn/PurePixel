@@ -201,20 +201,20 @@ public class ACP {
      * @return une nouvelle liste d'objets représentant les vecteurs débruités.
      */
 	public static ArrayList<Vecteur> denoisingACP(ArrayList<Vecteur> vecteurs, String typeSeuillage, String methodeSeuil, double sigma) {
-	    // 1. Centrage / réduction
+	    // Centrage / réduction
 	    ArrayList<Vecteur> vecteursCentres = moyCov(vecteurs);
 
-	    // 2. ACP sur les vecteurs centrés
+	    // ACP sur les vecteurs centrés
 	    ACP acp = new ACP(vecteursCentres);
 	    ArrayList<Vecteur> base = acp.traitementACP(acp); // base orthonormale obtenue via ACP
 	    System.out.println("B dimensions: " + base.size() + " vecteurs");
 
-	    // 3. Projection des vecteurs centrés dans la base ACP
+	    // Projection des vecteurs centrés dans la base ACP
 	    List<Vecteur> coeffs = Vecteur.proj(base, vecteursCentres); // Projection des vecteurs centrés
 
 	    printStats("Avant seuillage (1er vecteur)", coeffs.get(0).getValeur());
 
-	    // 7. Calcul du seuil
+	    // Calcul du seuil
 	    double seuil = 0;
 	    if (methodeSeuil.equalsIgnoreCase("VisuShrink")) {
 	        int tailleImage = vecteurs.size() * vecteurs.get(0).getTaille();
@@ -224,7 +224,7 @@ public class ACP {
 	    }
 	    System.out.println("Seuil utilisé : " + seuil);
 
-	    // 8. Application du seuillage
+	    // Application du seuillage
 	    Seuillage seuillage = new Seuillage(seuil, coeffs);
 	    List<Vecteur> coeffsSeuillees;
 	    if (typeSeuillage.equalsIgnoreCase("dur")) {
@@ -238,7 +238,7 @@ public class ACP {
 	        printStats("Après seuillage (1er vecteur)", coeffsSeuillees.get(0).getValeur());
 	    }
 
-	    // 9. Reconstruction de la matrice coeffs seuillees
+	    // Reconstruction de la matrice coeffs seuillees
 	    // Conversion List<Vecteur> => double[][]
 	    double[][] coeffsMatrix = listToMatrice(new ArrayList<>(coeffsSeuillees));
 
@@ -248,13 +248,13 @@ public class ACP {
 	    // Transposition : vecteurs en colonnes attendue par la suite
 	    RealMatrix coeffsSeuilleesMatrix = matrix.transpose();
 
-	 // 9bis. Création matrice base ACP B (p x k)
+	    // Création matrice base ACP B (p x k)
 	    RealMatrix B = MatrixUtils.createRealMatrix(listToMatrice(base)).transpose();
 
-	    // 10. Multiplication B * coeffsSeuilleesMatrix
+	    // Multiplication B * coeffsSeuilleesMatrix
 	    RealMatrix X_denoised = B.multiply(coeffsSeuilleesMatrix);
 
-	    // 11. Conversion en liste de vecteurs
+	    // Conversion en liste de vecteurs
 	    double[][] dataDenoised = X_denoised.transpose().getData();
 	    ArrayList<Vecteur> resultat = matriceToList(dataDenoised);
 
@@ -285,6 +285,7 @@ public class ACP {
 	    System.out.printf("[%s] Min: %.4f, Max: %.4f, Mean: %.4f, Std: %.4f\n", label, min, max, mean, std);
 	}
 
+	
 
 
 }

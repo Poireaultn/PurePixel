@@ -312,8 +312,8 @@ public class Image {
 	public static Image denoisingGlobalPCA(Image imgNoisy, int patchSize, String typeSeuillage, String methodeSeuil, double sigma) {
 	    // 1. Calculer le shift adapté
 	    int shift = Patch.calculerShift(imgNoisy, patchSize);
-	    System.out.println("Taille shift" + shift);
-	    System.out.println("Taille Patch" + patchSize);
+	    System.out.println("Taille du shift : " + shift);
+	    System.out.println("Taille des Patchs : " + patchSize + " pixels");
 	    // 2. Extraire les patchs avec ce shift
 	    List<Patch> patchs = Patch.ExtractPatchs(imgNoisy, patchSize, shift);
 	    
@@ -323,7 +323,6 @@ public class Image {
 	    // 4. Appliquer le débruitage PCA
 	    ArrayList<Vecteur> vecteursArrayList = new ArrayList<>(vecteurs);
 	    List<Vecteur> vecteursDen = ACP.denoisingACP(vecteursArrayList, typeSeuillage, methodeSeuil, sigma);
-	    System.out.println("test");
 	    // 5. Reconversion des vecteurs débruités en patchs
 	    List<Patch> patchsDen = Patch.PatchVectors(vecteursDen);
 	    

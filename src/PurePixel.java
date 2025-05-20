@@ -93,24 +93,34 @@ public class PurePixel {
 
 			String cheminBruitee = filename + "/" + tab[choixImage];
 
-			 // Choix de la méthode de débruitage
+			// Choix de la méthode de débruitage
 			System.out.println("Choisissez le type de méthode de débruitage :");
 			System.out.println("1 : Méthode globale");
 			System.out.println("2 : Méthode locale");
 			int choixMethode = sc.nextInt();
 			
-			 // Choix du type de seuillage
+			// Choix du type de seuillage
 			System.out.println("Choisissez le type de seuillage :");
 			System.out.println("1 : Seuillage dur");
 			System.out.println("2 : Seuillage doux");
 			int choixSeuillage = sc.nextInt();
+			
+			// Choix de la méthode de calcul du seuil
+			System.out.println("Choisissez la méthode de calcul du seuil :");
+			System.out.println("1 : Seuil VisuShrink");
+			System.out.println("2 : Seuil BayesShrink");
+			int choixSeuil = sc.nextInt();
+			
+			// Choix de la méthode de calcul du seuil
+			System.out.println("Choisissez la taille des patchs :");
+			int patchSize = sc.nextInt();
+
 
 			try {
 			    Image imgBruitée = new Image(cheminBruitee);
 			    Image imgDebruitee = null;
 			    String typeSeuillage = (choixSeuillage == 1) ? "dur" : "doux";
-			    String methodeSeuil = "VisuShrink"; 
-			    int patchSize = 8;  // taille patch par défaut, modifiable
+			    String methodeSeuil = (choixSeuil == 1) ? "VisuShrink" : "BayesShrink";
 			    double sigma = Math.sqrt(20); // écart type bruit, à ajuster ou demander à l'utilisateur
 
 			    
@@ -124,10 +134,22 @@ public class PurePixel {
 			        System.out.println("Méthode locale non encore implémentée.");
 			        return;
 			    }
-
+			    String methode;
 			    if (imgDebruitee != null) {
-		            Image.EnregistrerImage(imgDebruitee, "src/Image/Resultats/image_debruitee.png");
-		            System.out.println("Image débruitée sauvegardée dans src/Image/Resultats/image_debruitee.png");
+			    	if(methodeSeuil == "VisuShrink") {
+			    		methodeSeuil = "VS";
+			    	}else {
+			    		methodeSeuil = "BS";
+			    	}
+			    	if(choixMethode == 1) {
+			    		methode = "GB";
+			    	}else {
+			    		methode = "LC";
+			    	}
+			    	
+					String filefinalname = "src/Image/Resultats/IMG_debruitee_"+methode+"_"+methodeSeuil+"_"+typeSeuillage+"_patch"+patchSize+".png";
+		            Image.EnregistrerImage(imgDebruitee,filefinalname);
+		            System.out.println("Image débruitée sauvegardée dans : "+filefinalname);
 		        } else {
 		            System.out.println("Échec du débruitage.");
 		        }
