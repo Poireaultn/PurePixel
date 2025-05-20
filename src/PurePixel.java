@@ -1,5 +1,12 @@
+import java.util.Scanner;
+import Image.Image;
+
+
+import java.io.File;
+import java.io.IOException;
+
 /**
- * La classe PurePixel représente l'application principale permettant de gérer les opérations  de bruitage et de débruitage sur des images. 
+ * La classe PurePixel représente l'application principale permettant de gérer les opérations  de bruitage et de débruitage sur des images.
  * L'utilisateur peut sélectionner une image depuis un répertoire spécifique, choisir un mode de traitement, et sauvegarder le résultat dans un emplacement défini.
  * Modes disponibles :
  * <ul>
@@ -11,14 +18,6 @@
  * @author Charles Mendiburu
  * @version 1.0
  */
-
-import java.util.Scanner;
-import Image.Image;
-
-
-import java.io.File;
-import java.io.IOException;
-
 public class PurePixel {
 	
 	 /**
@@ -27,7 +26,6 @@ public class PurePixel {
      * @author Charles Mendiburu
      * @version 1.0
      */
-
 	public static void main(String[] args) {
 		 // Chemin vers le dossier contenant les images
 		String filename="src/Image/Images";
@@ -122,6 +120,7 @@ public class PurePixel {
 			    	imgDebruitee = Image.denoisingGlobalPCA(imgBruitée, patchSize, typeSeuillage, methodeSeuil, sigma);
 
 			    } else {
+			    	
 			        System.out.println("Méthode locale non encore implémentée.");
 			        return;
 			    }
@@ -152,8 +151,7 @@ public class PurePixel {
      * Le chemin par défaut est "src/Image/Images". 
      * @author Charles Mendiburu
      * @version 1.0
-     */
-	
+     */	
 	public static void afficherChoixImage() {
 		// Chemin du dossier contenant les images
 		String filename="src/Image/Images";

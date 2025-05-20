@@ -27,7 +27,7 @@ public class Seuillage {
      * Constructeur de la classe Seuillage.
      *
      * @param seuil Seuil à appliquer aux coefficients.
-     * @param ListV Liste de vecteurs de coefficients.
+     * @param coeffs Liste de vecteurs de coefficients.
      */
     public Seuillage(double seuil, List<Vecteur> coeffs) {
         this.seuil = seuil;

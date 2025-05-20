@@ -27,7 +27,7 @@ public class ACP {
 	 /**
      * Transforme une liste de vecteurs en une matrice 2D.
      * @author Nathan Poireault
-     * @param ListeVecteurs la liste de vecteurs à transformer
+     * @param listeVecteurs la liste de vecteurs à transformer
      * @return une matrice contenant les valeurs des vecteurs
      */
 	public static double[][] listToMatrice(ArrayList<Vecteur> listeVecteurs) {

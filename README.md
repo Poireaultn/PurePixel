@@ -84,7 +84,7 @@ java -cp "bin:lib/commons-math3-3.6.1.jar" PurePixel.Main
 - 📉 Réduction dimensionnelle via **ACP**
 - 🧽 **Débruitage** via **seuillage doux** ou **dur**
 - 🖼️ Chargement des images depuis `src/Image/Images`
-- 💾 Sauvegarde des résultats dans `src/Image/Resultats`
+- 📂 Sauvegarde des résultats dans `src/Image/Resultats`
 
 ---
 
@@ -100,6 +100,27 @@ PurePixel/
 ├── lib/
 │   └── commons-math3-3.6.1.jar  # Librairie mathématique
 └── README.md
+```
+
+---
+
+## 📄 Génération de la Javadoc
+
+Pour générer automatiquement la documentation Java (Javadoc) pour l'ensemble du projet, y compris tous les packages, suivez ces étapes :
+
+### ▶️ Depuis la ligne de commande
+
+1. Ouvrir un terminal à la racine du projet (là où se trouve le dossier `src/`).
+2. Exécuter la commande suivante :
+
+```bash
+javadoc -d doc -sourcepath src -subpackages ACP Image Seuillage Vecteur
+```
+
+3. Pour consulter la documentation, ouvrez le fichier suivant dans votre navigateur :
+
+```
+doc/index.html
 ```
 
 ---
