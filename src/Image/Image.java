@@ -209,44 +209,71 @@ public class Image {
 	}
 	
 	/**
+	 * Calcule la taille minimale d'une imagette pour qu'elle contienne
+	 * au moins autant de patchs que la dimension du patch (taillePatch²),
+	 * en fonction d'un shift donné.
+	 *
+	 * @param taillePatch la taille (en pixels) d'un côté du patch (ex : 8 pour un patch 8x8)
+	 * @param shift       le pas de déplacement entre deux patchs
+	 * @return la taille minimale (en pixels) de l'imagette à utiliser
+	 */
+	public static int tailleImagetteMinimale(int taillePatch, int shift) {
+	    if (taillePatch <= 0 || shift <= 0) {
+	        throw new IllegalArgumentException("taillePatch et shift doivent être strictement positifs.");
+	    }
+
+	    int dimPatch = taillePatch * taillePatch;
+
+	    // nombre minimal de patchs nécessaires
+	    int nbPatchsCible = dimPatch;
+
+	    // On cherche la plus petite taille L telle que :
+	    // ((L - taillePatch) / shift + 1)^2 >= nbPatchsCible
+	    int taille = taillePatch; // on commence au minimum possible
+	    while (true) {
+	        int n = (taille - taillePatch) / shift + 1;
+	        int nbPatchs = n * n;
+
+	        if (nbPatchs >= nbPatchsCible) {
+	            return taille;
+	        }
+
+	        taille++;
+	    }
+	}
+
+	
+	/**
      * Découpe l'image en sous-images carrées de taille donnée.
      *
      * @param taille Taille d'un bloc carré (ex : 128x128).
-     * @param nombre Nombre maximum de sous-images à extraire.
      * @return Liste de sous-images.
      */
-    public List<Image> decoupeImage(int taille, int nombre) {
-        List<Image> subImages = new ArrayList<>();
-        int rows = (int) Math.ceil((double) this.height / taille);
-        int cols = (int) Math.ceil((double) this.width / taille);
+	public ArrayList<Image> decoupeImage(int taille) {
+		ArrayList<Image> subImages = new ArrayList<>();
+		double[][] pixels = this.getPixels();
 
-        int count = 0;
-        for (int row = 0; row < rows && count < nombre; row++) {
-            for (int col = 0; col < cols && count < nombre; col++) {
-                int startX = col * taille;
-                int startY = row * taille;
-                int endX = Math.min(startX + taille, this.width);
-                int endY = Math.min(startY + taille, this.height);
-
-                double[][] subPixels = new double[endY - startY][endX - startX];
-                for (int y = startY; y < endY; y++) {
-                    for (int x = startX; x < endX; x++) {
-                        subPixels[y - startY][x - startX] = this.pixels[y][x];
-                    }
-                }
-
-				try{
-                Image subImage = new Image(subPixels, endY - startY, endX - startX);
-                subImages.add(subImage);
-                count++;
-            }catch (Exception e) {
-				System.out.println("Erreur lors de la découpe de l'image : " + e.getMessage());
+		System.out.println("height : " + this.height);	
+		System.out.println("width : " + this.width);
+		System.out.println("taille : " + taille);
+		for (int i = 0; i < this.height; i += taille) {
+			for (int j = 0; j < this.width; j += taille) {
+				double[][] subImagePixels = new double[taille][taille];
+				for (int k = 0; k < taille; k++) {
+					for (int l = 0; l < taille; l++) {
+						if (i + k < this.height && j + l < this.width) {
+							subImagePixels[k][l] = pixels[i + k][j + l];
+						} else {
+							subImagePixels[k][l] = 0; // Remplissage avec 0 si on dépasse les dimensions
+						}
+					}
+				}
+				Image subImage = new Image(subImagePixels, taille, taille);
+				subImages.add(subImage);
 			}
-        }
-        }
+		}
 		return subImages;
-
-    }
+	}
 
     /**
      * Reconstitue une image à partir de patches en moyennant les zones qui se recouvrent.
@@ -299,6 +326,45 @@ public class Image {
 	    return new Image(pixels, imageHeight, imageWidth);
 	}
 	
+	public static Image reconstruction(ArrayList<Image> subImages, int imageHeight, int imageWidth) {
+		if (subImages == null || subImages.isEmpty()) return null;
+
+		int patchSize = subImages.get(0).getHeight();
+
+		int real_height = (int) Math.ceil((double) imageHeight / patchSize) * patchSize;
+		int real_width = (int) Math.ceil((double) imageWidth / patchSize) * patchSize;
+		double[][] pixels = new double[real_height][real_width];
+
+		int index = 0;
+		for (int i = 0; i < real_height; i += patchSize) {
+			for (int j = 0; j < real_width; j += patchSize) {
+				if (index >= subImages.size()) break;
+
+				double[][] patchPixels = subImages.get(index).getPixels();
+				for (int k = 0; k < patchSize; k++) {
+					for (int l = 0; l < patchSize; l++) {
+						int y = i + k;
+						int x = j + l;
+						if (y < real_height && x < real_width) {
+							pixels[y][x] = patchPixels[k][l];
+						}
+					}
+				}
+				index++;
+			}
+		}
+
+		// Recadrage à la taille originale
+		double[][] finalPixels = new double[imageHeight][imageWidth];
+		for (int i = 0; i < imageHeight; i++) {
+			for (int j = 0; j < imageWidth; j++) {
+				finalPixels[i][j] = pixels[i][j];
+			}
+		}
+
+		return new Image(finalPixels, imageHeight, imageWidth);
+	}
+	
 	/**
      * Applique un débruitage global par ACP sur l'image.
      *
@@ -349,6 +415,71 @@ public class Image {
 
 	    // 8. Retourner la nouvelle image normalisée
 	    return new Image(pixels, imgDenoised.getHeight(), imgDenoised.getWidth());
+	}
+	
+	/**
+     * Applique un débruitage local par ACP sur l'image.
+     *
+     * @param imgNoisy       Image bruitée.
+     * @param imagetteSize   Taille des imagettes.
+     * @param patchSize      Taille des patches.
+     * @param typeSeuillage  Type de seuillage.
+     * @param methodeSeuil   Méthode de calcul du seuil.
+     * @param sigma          Bruit estimé (sigma).
+     * @return Image débruitée.
+     */
+	public static Image denoisingLocalPCA(Image imgNoisy, int imagetteSize, int patchSize, String typeSeuillage, String methodeSeuil, double sigma) {
+		// On découpe l'image en plusieurs imagettes
+		ArrayList<Image> listeImagettes = imgNoisy.decoupeImage(imagetteSize);
+		
+		// On applique la méthode globale sur chaque imagette
+		ArrayList<Image> listeImgDenoised = new ArrayList<Image>();
+		for (int i = 0; i < listeImagettes.size(); i++) {
+			Image imgDenoised = denoisingGlobalPCA(listeImagettes.get(i),patchSize,typeSeuillage,methodeSeuil,sigma);
+			listeImgDenoised.add(imgDenoised);
+		}
+		
+		// on reconstruit l'image finale
+		Image imgDenoised = reconstruction(listeImgDenoised,imgNoisy.getHeight(),imgNoisy.getWidth());
+		
+		return new Image(imgDenoised.getPixels(), imgDenoised.getHeight(), imgDenoised.getWidth());
+	}
+	
+	/**
+     * Calcule l'erreur quadratique moyenne (MSE).
+     *
+     * @param imgNoisy      Image bruitée.
+     * @param imgDenoised   Image debruitée.
+     * @return MSE.
+     */
+	public static double MSE(Image imgNoisy, Image imgDenoised) {
+		
+		int hauteur = imgNoisy.getHeight();
+		int largeur = imgNoisy.getWidth();
+		double[][] pixelsImgNoisy = imgNoisy.getPixels();
+		double[][] pixelsImgDenoised = imgDenoised.getPixels();
+		
+		// Calcul du MSE
+		double somme = 0.0;
+		for (int i = 0; i < hauteur; i++) {
+			for (int j =0; j < largeur; j++) {
+				somme += Math.pow(pixelsImgNoisy[i][j]-pixelsImgDenoised[i][j],2);
+			}
+		}
+		
+		double mse = somme / (hauteur*largeur);
+		
+		return mse;
+	}
+	
+	/**
+     * Calcule le PSNR.
+     *
+     * @param MSE      Valeur du MSE.
+     * @return PSNR.
+     */
+	public static double PSNR(double MSE) {
+		return 10*Math.log10(Math.pow(255, 2)/MSE);
 	}
 
 

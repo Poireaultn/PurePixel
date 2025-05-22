@@ -162,21 +162,27 @@ public class Patch {
     }
     
     /**
-     * Permet de calculer le shift qu'on va utiliser dans l'extraction de patchs.
+     * Calcule le plus grand shift < taillePatch qui divise bien (height - taille) ou (width - taille),
+     * mais sans dépasser une valeur maximale (ex : 8) pour rester raisonnable.
+     *
+     * @param img    L’image bruitée
+     * @param taille La taille des patchs (ex: 8)
+     * @return Le meilleur shift admissible (max 8)
      */
     public static int calculerShift(Image img, int taille) {
         List<Integer> shift_possible = new ArrayList<>();
         int height = img.getHeight();
-        int width = img.getWidth();       
+        int width = img.getWidth();
+        int maxShift = 8;  // Shift maximal autorisé
 
-        for (int i = 1; i < taille; i++) { // on reste strictement < taille
+        for (int i = 1; i < taille && i <= maxShift; i++) {
             if ((height - taille) % i == 0 || (width - taille) % i == 0) {
                 shift_possible.add(i);
             }
         }
 
         if (shift_possible.isEmpty()) {
-            throw new IllegalArgumentException("Aucun shift valide trouvé strictement inférieur à la taille des patchs (" + taille + ")");
+            throw new IllegalArgumentException("Aucun shift valide trouvé < taille (" + taille + ")");
         }
 
         return Collections.max(shift_possible);

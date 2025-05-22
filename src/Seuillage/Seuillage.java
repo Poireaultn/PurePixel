@@ -91,7 +91,6 @@ public class Seuillage {
         return (sigma * sigma) / sigmaX;
     }
 
-
     /**
      * Applique un seuillage dur à tous les vecteurs : les valeurs en-dessous du seuil deviennent 0.
      *

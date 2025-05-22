@@ -1,6 +1,6 @@
 import java.util.Scanner;
 import Image.Image;
-
+import Image.Patch;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,13 +115,14 @@ public class PurePixel {
 			System.out.println("Choisissez la taille des patchs :");
 			int patchSize = sc.nextInt();
 
-
+			int choixTailleImagettes = 0;
+			
 			try {
 			    Image imgBruitée = new Image(cheminBruitee);
 			    Image imgDebruitee = null;
 			    String typeSeuillage = (choixSeuillage == 1) ? "dur" : "doux";
 			    String methodeSeuil = (choixSeuil == 1) ? "VisuShrink" : "BayesShrink";
-			    double sigma = Math.sqrt(20); // écart type bruit, à ajuster ou demander à l'utilisateur
+			    double sigma = Math.sqrt(30); // écart type bruit, à ajuster ou demander à l'utilisateur
 
 			    
 
@@ -131,10 +132,25 @@ public class PurePixel {
 
 			    } else {
 			    	
-			        System.out.println("Méthode locale non encore implémentée.");
-			        return;
+			    	
+			    	int shift = Patch.calculerShift(imgBruitée, patchSize);
+			    	int tailleImagetteMinimal = Image.tailleImagetteMinimale(patchSize, shift);
+
+			    	// Choix de la taille des imagettes
+			    	do {
+			    	    System.out.println("Choisissez la taille des imagettes (min " + tailleImagetteMinimal + ") : ");
+			    	    choixTailleImagettes = sc.nextInt();
+
+			    	    if (choixTailleImagettes < tailleImagetteMinimal) {
+			    	        System.out.println("❌ Taille trop petite. Veuillez entrer une valeur ≥ " + tailleImagetteMinimal);
+			    	    }
+			    	} while (choixTailleImagettes < tailleImagetteMinimal);
+					
+					imgDebruitee = Image.denoisingLocalPCA(imgBruitée, choixTailleImagettes, patchSize, typeSeuillage, methodeSeuil, sigma);
+					
 			    }
 			    String methode;
+			    String filefinalname;
 			    if (imgDebruitee != null) {
 			    	if(methodeSeuil == "VisuShrink") {
 			    		methodeSeuil = "VS";
@@ -143,11 +159,17 @@ public class PurePixel {
 			    	}
 			    	if(choixMethode == 1) {
 			    		methode = "GB";
+			    		filefinalname = "src/Image/Resultats/IMG_debruitee_"+methode+"_"+methodeSeuil+"_"+typeSeuillage+"_patch"+patchSize+".png";
 			    	}else {
 			    		methode = "LC";
+			    		filefinalname = "src/Image/Resultats/IMG_debruitee_"+methode+"_"+methodeSeuil+"_"+typeSeuillage+"_patch"+patchSize+"_imagette"+choixTailleImagettes+".png";
 			    	}
 			    	
-					String filefinalname = "src/Image/Resultats/IMG_debruitee_"+methode+"_"+methodeSeuil+"_"+typeSeuillage+"_patch"+patchSize+".png";
+			    	double MSE = Image.MSE(imgBruitée,imgDebruitee);
+			    	System.out.println("MSE : "+MSE);
+			    	double PSNR = Image.PSNR(MSE);
+			    	System.out.println("PSNR : "+PSNR);
+			    	
 		            Image.EnregistrerImage(imgDebruitee,filefinalname);
 		            System.out.println("Image débruitée sauvegardée dans : "+filefinalname);
 		        } else {

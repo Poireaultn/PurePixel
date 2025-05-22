@@ -220,10 +220,14 @@ public class ACP {
 	        int tailleImage = vecteurs.size() * vecteurs.get(0).getTaille();
 	        seuil = Seuillage.seuilV(sigma, tailleImage);
 	    } else if (methodeSeuil.equalsIgnoreCase("BayesShrink")) {
-	        seuil = Seuillage.seuilB(sigma, coeffs);
+	    	seuil = Seuillage.seuilB(sigma, coeffs);
+	    }
+	    
+	    if (seuil < 2) {
+	    	seuil = 2;
 	    }
 	    System.out.println("Seuil utilisé : " + seuil);
-
+	    
 	    // Application du seuillage
 	    Seuillage seuillage = new Seuillage(seuil, coeffs);
 	    List<Vecteur> coeffsSeuillees;
@@ -232,12 +236,12 @@ public class ACP {
 	    } else {
 	        coeffsSeuillees = seuillage.seuillageDoux();
 	    }
-
+		
 	    // Stats après seuillage
 	    if (!coeffsSeuillees.isEmpty()) {
 	        printStats("Après seuillage (1er vecteur)", coeffsSeuillees.get(0).getValeur());
 	    }
-
+	    
 	    // Reconstruction de la matrice coeffs seuillees
 	    // Conversion List<Vecteur> => double[][]
 	    double[][] coeffsMatrix = listToMatrice(new ArrayList<>(coeffsSeuillees));
