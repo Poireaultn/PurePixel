@@ -325,7 +325,15 @@ public class Image {
 
 	    return new Image(pixels, imageHeight, imageWidth);
 	}
-	
+
+	/**
+	* Reconstitue une image à partir d'une liste d'imagette.
+	*
+	* @param subImages      Liste d'imagettes.
+	* @param imageHeight Hauteur de l'image finale.
+	* @param imageWidth  Largeur de l'image finale.
+	* @return Image reconstruite.
+	*/
 	public static Image reconstruction(ArrayList<Image> subImages, int imageHeight, int imageWidth) {
 		if (subImages == null || subImages.isEmpty()) return null;
 
