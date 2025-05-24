@@ -1,4 +1,4 @@
-package Image;
+package Java.Image;
 
 /**
  * Représente une position rectangulaire dans une image,

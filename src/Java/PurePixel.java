@@ -1,6 +1,9 @@
+package Java;
+
 import java.util.Scanner;
-import Image.Image;
-import Image.Patch;
+
+import Java.Image.Patch;
+import Java.Image.Image;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +31,7 @@ public class PurePixel {
      */
 	public static void main(String[] args) {
 		 // Chemin vers le dossier contenant les images
-		String filename="src/Image/Images";
+		String filename = "src/resources/Image/Images";
 		File file =(new File(filename));
 		// Récupère la liste des images disponibles dans le dossier
 		String[] tab = file.list();
@@ -70,6 +73,10 @@ public class PurePixel {
               try {
                   Image imgOriginale = new Image(chemin);
                   Image imgBruitée = Image.noising(imgOriginale, ecartType);
+                  File dossierResultats = new File("src/resources/Image/Resultats");
+                  if (!dossierResultats.exists()) {
+                      dossierResultats.mkdirs(); // Crée le dossier (et les parents manquants)
+                  }
 
                   Image.EnregistrerImage(imgBruitée, "src/Image/Resultats/image_bruitee.png");
               } catch (IOException e) {
@@ -77,7 +84,6 @@ public class PurePixel {
               }
 
               break;
-
 		case 2:
 			System.out.println("Vous avez choisi le débruitage.");
 
@@ -122,7 +128,7 @@ public class PurePixel {
 			    Image imgDebruitee = null;
 			    String typeSeuillage = (choixSeuillage == 1) ? "dur" : "doux";
 			    String methodeSeuil = (choixSeuil == 1) ? "VisuShrink" : "BayesShrink";
-			    double sigma = Math.sqrt(30); // écart type bruit, à ajuster ou demander à l'utilisateur
+			    double sigma = Math.sqrt(50); // écart type bruit, à ajuster ou demander à l'utilisateur
 
 			    
 
@@ -159,10 +165,10 @@ public class PurePixel {
 			    	}
 			    	if(choixMethode == 1) {
 			    		methode = "GB";
-			    		filefinalname = "src/Image/Resultats/IMG_debruitee_"+methode+"_"+methodeSeuil+"_"+typeSeuillage+"_patch"+patchSize+".png";
+			    		filefinalname = "src/resources/Image/Resultats/IMG_debruitee_"+methode+"_"+methodeSeuil+"_"+typeSeuillage+"_patch"+patchSize+".png";
 			    	}else {
 			    		methode = "LC";
-			    		filefinalname = "src/Image/Resultats/IMG_debruitee_"+methode+"_"+methodeSeuil+"_"+typeSeuillage+"_patch"+patchSize+"_imagette"+choixTailleImagettes+".png";
+			    		filefinalname = "src/resources/Image/Resultats/IMG_debruitee_"+methode+"_"+methodeSeuil+"_"+typeSeuillage+"_patch"+patchSize+"_imagette"+choixTailleImagettes+".png";
 			    	}
 			    	
 			    	double MSE = Image.MSE(imgBruitée,imgDebruitee);
@@ -198,7 +204,7 @@ public class PurePixel {
      */	
 	public static void afficherChoixImage() {
 		// Chemin du dossier contenant les images
-		String filename="src/Image/Images";
+		String filename = "src/resources/Image/Images";
 		File file =(new File(filename));
 		// Liste les fichiers dans le dossier
 		String[] tab = file.list();

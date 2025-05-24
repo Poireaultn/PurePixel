@@ -1,7 +1,7 @@
-package Image;
+package Java.Image;
 import java.util.*;
 
-import Vecteur.Vecteur;
+import Java.Vecteur.Vecteur;
 
 /**
  * Classe représentant un patch d'image carré, utilisé pour l'analyse et le traitement d'image

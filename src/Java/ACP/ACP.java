@@ -5,7 +5,7 @@
  * @version 1.0
  */
 
-package ACP;
+package Java.ACP;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +14,11 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
-import Seuillage.Seuillage;
+import Java.Seuillage.Seuillage;
 
 import org.apache.commons.math3.linear.EigenDecomposition;
 
-import Vecteur.Vecteur;
+import Java.Vecteur.Vecteur;
 
 public class ACP {
 	private RealMatrix covariance;

@@ -1,4 +1,4 @@
-package Image;
+package Java.Image;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
@@ -9,8 +9,8 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import ACP.ACP;
-import Vecteur.Vecteur;
+import Java.ACP.*;
+import Java.Vecteur.*;
 
 /**
  * Représente une image en niveaux de gris avec des opérations de traitement

@@ -1,9 +1,9 @@
-package Seuillage;
+package Java.Seuillage;
 
 import java.util.List;
 import java.util.ArrayList;
 
-import Vecteur.Vecteur;
+import Java.Vecteur.Vecteur;
 
 /**
  * Classe permettant d'appliquer différents types de seuillages (dur et doux)

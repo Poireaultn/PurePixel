@@ -1,0 +1,78 @@
+/* === Racine de l'application === */
+.root {
+    -fx-background-color: #f0f4f8;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* === Titre principal === */
+#labelTitre {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 10px;
+}
+
+/* === Labels généraux === */
+.label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+/* === Boutons === */
+.button {
+    -fx-background-color: linear-gradient(to right, #4facfe, #00f2fe);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 10px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 5, 0, 2, 2);
+    -fx-border-width: 0;
+}
+
+.button:hover {
+    -fx-background-color: linear-gradient(to right, #00f2fe, #4facfe);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+/* === ComboBox & Slider === */
+.combo-box, .slider {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+}
+
+/* === ImageView === */
+.image-view {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.2, 4, 4);
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-color: white;
+}
+
+/* === Conteneurs généraux (VBox / HBox) === */
+.hbox, .vbox {
+    -fx-spacing: 10px;
+    -fx-padding: 10px;
+}
+
+/* === Conteneur d'image (facultatif, si classe ajoutée) === */
+.image-container {
+    -fx-background-color: #ffffff;
+    -fx-padding: 10px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #ccc;
+    -fx-border-width: 1px;
+}
+
+/* === Section contrôle à droite (si classe ou id spécifique) === */
+#controlPanel {
+    -fx-background-color: #eaf0f6;
+    -fx-border-color: #c8d6e5;
+    -fx-border-radius: 10px;
+    -fx-padding: 15px;
+}

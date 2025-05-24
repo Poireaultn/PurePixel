@@ -1,4 +1,4 @@
-package Image;
+package Java.Image;
 
 /**
  * Représente un point en 2 dimensions (x, y).
