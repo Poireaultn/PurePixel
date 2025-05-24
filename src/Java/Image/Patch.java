@@ -106,22 +106,6 @@ public class Patch {
             System.out.println("]");
         }
     }
-
-    /**
-     * Transforme le patch en vecteur pour traitement ACP.
-     *
-     * @return Le vecteur correspondant au patch.
-     */
-    public Vecteur toVecteur() {
-        double[] valeurs = new double[taille * taille];
-        int index = 0;
-        for (int i = 0; i < taille; i++) {
-            for (int j = 0; j < taille; j++) {
-                valeurs[index++] = this.valeur[i][j]; 
-            }
-        }
-        return new Vecteur(this.id, valeurs.length, valeurs);
-    }
     
     /**
      * Convertit une liste de patches en liste de vecteurs.
