@@ -5,22 +5,31 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ListView?>
 
-<BorderPane
-    xmlns="http://javafx.com/javafx/23.0.1"
-    xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="Java.Controller.InterfaceController"
-    prefHeight="400.0" prefWidth="600.0"
-    stylesheets="@style.css">
+
+<BorderPane prefHeight="400.0" prefWidth="600.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Java.Controller.InterfaceController">
 
    <top>
-      <Label fx:id="labelTitre" id="labelTitre" text="PurePixel" BorderPane.alignment="CENTER" />
+      <Label id="labelTitre" fx:id="labelTitre" text="PurePixel" BorderPane.alignment="CENTER" />
    </top>
-
+   
+   <left>
+      <VBox spacing="10.0" BorderPane.alignment="CENTER">
+         <padding><Insets bottom="10" left="30" right="10" top="10" /></padding>
+         <children>
+            <Label text="Images chargées :" /> 
+            <ListView fx:id="listeImages" prefHeight="520.0" prefWidth="250.0" />
+                  
+         </children>
+      </VBox>
+   </left>
+   
    <center>
       <HBox alignment="CENTER" styleClass="hbox" BorderPane.alignment="CENTER">
          <children>
@@ -39,20 +48,28 @@
    </center>
 
    <right>
-      <VBox fx:id="controlPanel" id="controlPanel" spacing="10.0" BorderPane.alignment="TOP_CENTER">
-         <padding><Insets top="10" right="10" bottom="10" left="10" /></padding>
+      <VBox id="controlPanel" fx:id="controlPanel" spacing="10.0" BorderPane.alignment="TOP_CENTER">
+         <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
          <children>
             <Label text="Méthodes de traitement" />
-            <ComboBox fx:id="comboMethode" promptText="Choisir une méthode" styleClass="combo-box"/>
+            <ComboBox fx:id="comboMethode" promptText="Choisir une méthode" styleClass="combo-box" />
             
             <Label text="Type de seuillage" />
-            <ComboBox fx:id="comboSeuilType" promptText="Choisir un type" styleClass="combo-box"/>
+            <ComboBox fx:id="comboSeuilType" promptText="Choisir un type" styleClass="combo-box" />
             
             <Label text="Méthode de seuil" />
-            <ComboBox fx:id="comboSeuilMeth" promptText="Choisir une méthode" styleClass="combo-box"/>
+            <ComboBox fx:id="comboSeuilMeth" promptText="Choisir une méthode" styleClass="combo-box" />
             
             <Label text="Niveau de bruit" />
-            <Slider fx:id="sliderNiveauBruit" max="50.0" value="25.0" styleClass="slider"/>
+            <Slider fx:id="sliderNiveauBruit" max="50.0" styleClass="slider" value="25.0" />
+            <VBox fx:id="boxParametresLocaux" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="Taille des patchs" />
+                  <TextField fx:id="tfTaillePatch" />
+                  <Label text="Nombre d'imagettes" />
+                  <TextField fx:id="tfNbImagettes" />
+               </children>
+            </VBox>
             
             <Button fx:id="btnAppliquer" text="Appliquer" />
          </children>
@@ -61,7 +78,7 @@
 
    <bottom>
       <HBox alignment="CENTER" spacing="15.0" styleClass="hbox" BorderPane.alignment="CENTER">
-         <padding><Insets top="10" right="10" bottom="10" left="10" /></padding>
+         <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
          <children>
             <Button fx:id="btnCharger" text="Charger Image" />
             <Button fx:id="btnAppliquer2" text="Appliquer" />

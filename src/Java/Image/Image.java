@@ -482,7 +482,26 @@ public class Image {
 		return 10*Math.log10(Math.pow(255, 2)/MSE);
 	}
 
+	
+	/**
+	 * Convertit cette instance d'Image (matrice de niveaux de gris) en BufferedImage.
+	 *
+	 * @return BufferedImage représentant l'image.
+	 */
+	public BufferedImage toBufferedImage() {
+	    BufferedImage bi = new BufferedImage(this.width, this.height, BufferedImage.TYPE_BYTE_GRAY);
+	    WritableRaster raster = bi.getRaster();
 
+	    for (int y = 0; y < this.height; y++) {
+	        for (int x = 0; x < this.width; x++) {
+	            int gray = (int) Math.round(this.pixels[y][x]);
+	            gray = Math.max(0, Math.min(255, gray)); // Clamp pour rester entre 0 et 255
+	            raster.setSample(x, y, 0, gray);
+	        }
+	    }
+
+	    return bi;
+	}
 
 }
 
