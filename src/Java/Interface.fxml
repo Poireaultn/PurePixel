@@ -13,77 +13,130 @@
 <?import javafx.scene.control.ListView?>
 
 
-<BorderPane prefHeight="400.0" prefWidth="600.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Java.Controller.InterfaceController">
+<BorderPane prefHeight="400.0" prefWidth="600.0"
+	stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="Java.Controller.InterfaceController">
 
-   <top>
-      <Label id="labelTitre" fx:id="labelTitre" text="PurePixel" BorderPane.alignment="CENTER" />
-   </top>
-   
-   <left>
-      <VBox spacing="10.0" BorderPane.alignment="CENTER">
-         <padding><Insets bottom="10" left="30" right="10" top="10" /></padding>
-         <children>
-            <Label text="Images chargées :" /> 
-            <ListView fx:id="listeImages" prefHeight="520.0" prefWidth="250.0" />
-                  
-         </children>
-      </VBox>
-   </left>
-   
-   <center>
-      <HBox alignment="CENTER" styleClass="hbox" BorderPane.alignment="CENTER">
-         <children>
-            <VBox styleClass="image-container">
-               <children>
-                  <ImageView fx:id="imageOriginale" fitHeight="250.0" fitWidth="250.0" preserveRatio="true" styleClass="image-view" />
-               </children>
-            </VBox>
-            <VBox styleClass="image-container">
-               <children>
-                  <ImageView fx:id="imageTraitee" fitHeight="250.0" fitWidth="250.0" preserveRatio="true" styleClass="image-view" />
-               </children>
-            </VBox>
-         </children>
-      </HBox>
-   </center>
+	<top>
+		<Label id="labelTitre" fx:id="labelTitre" text="PurePixel"
+			BorderPane.alignment="CENTER" />
+	</top>
 
-   <right>
-      <VBox id="controlPanel" fx:id="controlPanel" spacing="10.0" BorderPane.alignment="TOP_CENTER">
-         <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-         <children>
-            <Label text="Méthodes de traitement" />
-            <ComboBox fx:id="comboMethode" promptText="Choisir une méthode" styleClass="combo-box" />
-            
-            <Label text="Type de seuillage" />
-            <ComboBox fx:id="comboSeuilType" promptText="Choisir un type" styleClass="combo-box" />
-            
-            <Label text="Méthode de seuil" />
-            <ComboBox fx:id="comboSeuilMeth" promptText="Choisir une méthode" styleClass="combo-box" />
-            
-            <Label text="Niveau de bruit" />
-            <Slider fx:id="sliderNiveauBruit" max="50.0" styleClass="slider" value="25.0" />
-            <VBox fx:id="boxParametresLocaux" prefHeight="200.0" prefWidth="100.0">
-               <children>
-                  <Label text="Taille des patchs" />
-                  <TextField fx:id="tfTaillePatch" />
-                  <Label text="Nombre d'imagettes" />
-                  <TextField fx:id="tfNbImagettes" />
-               </children>
-            </VBox>
-            
-            <Button fx:id="btnAppliquer" text="Appliquer" />
-         </children>
-      </VBox>
-   </right>
+	<left>
+		<VBox spacing="10.0" BorderPane.alignment="CENTER">
+			<padding>
+				<Insets bottom="10" left="30" right="10" top="10" />
+			</padding>
+			<children>
+				<Label text="Images chargées :" />
+				<ListView fx:id="listeImages" prefHeight="520.0"
+					prefWidth="250.0" />
 
-   <bottom>
-      <HBox alignment="CENTER" spacing="15.0" styleClass="hbox" BorderPane.alignment="CENTER">
-         <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-         <children>
-            <Button fx:id="btnCharger" text="Charger Image" />
-            <Button fx:id="btnAppliquer2" text="Appliquer" />
-            <Button fx:id="btnTelecharger" text="Télécharger" />
-         </children>
-      </HBox>
-   </bottom>
+			</children>
+		</VBox>
+	</left>
+
+	<center>
+		<HBox alignment="CENTER" styleClass="hbox"
+			BorderPane.alignment="CENTER">
+			<children>
+				<VBox styleClass="image-container">
+					<children>
+						<ImageView fx:id="imageOriginale" fitHeight="250.0"
+							fitWidth="250.0" preserveRatio="true" styleClass="image-view" />
+					</children>
+				</VBox>
+				<VBox styleClass="image-container">
+					<children>
+						<ImageView fx:id="imageTraitee" fitHeight="250.0"
+							fitWidth="250.0" preserveRatio="true" styleClass="image-view" />
+					</children>
+				</VBox>
+			</children>
+		</HBox>
+	</center>
+
+	<right>
+		<VBox id="controlPanel" fx:id="controlPanel" spacing="10.0"
+			BorderPane.alignment="TOP_CENTER">
+			<padding>
+				<Insets bottom="10" left="10" right="10" top="10" />
+			</padding>
+			<Label text="Mode de traitement" />
+			<ComboBox fx:id="comboTraitement" promptText="Choisir un traitement" />
+			
+			
+			<!-- Partie bruitage -->
+			<VBox fx:id="boxBruitage" spacing="10.0" visible="false"
+				managed="false">
+				<children>
+					<Label text="Niveau de bruit" />
+					<HBox spacing="10.0" alignment="CENTER_LEFT">
+						<children>
+							<Label text="0" />
+							<Slider fx:id="sliderNiveauBruitBruitage" min="0.0"
+								max="50.0" value="25.0" HBox.hgrow="ALWAYS" />
+							<Label text="50" />
+						</children>
+					</HBox>
+					<Label fx:id="labelValeurBruitBruitage" text="Valeur : 25" />
+				</children>
+			</VBox>
+
+			<!-- Partie débruitage -->
+			<VBox fx:id="boxDebruitage" spacing="10.0">
+				<children>
+					<Label text="Méthodes de traitement" />
+					<ComboBox fx:id="comboMethode"
+						promptText="Choisir une méthode" styleClass="combo-box" />
+
+					<Label text="Type de seuillage" />
+					<ComboBox fx:id="comboSeuilType"
+						promptText="Choisir un type" styleClass="combo-box" />
+
+					<Label text="Méthode de seuil" />
+					<ComboBox fx:id="comboSeuilMeth"
+						promptText="Choisir une méthode" styleClass="combo-box" />
+
+					<Label text="Niveau de bruit" />
+					<HBox spacing="10.0" alignment="CENTER_LEFT">
+						<children>
+							<Label text="0" />
+							<Slider fx:id="sliderNiveauBruit" min="0.0" max="50.0"
+								styleClass="slider" value="25.0" HBox.hgrow="ALWAYS" />
+							<Label text="50" />
+						</children>
+					</HBox>
+					<Label fx:id="labelValeurBruit" text="Valeur : 25" />
+
+					<VBox fx:id="boxParametresLocaux" prefHeight="200.0"
+						prefWidth="100.0">
+						<children>
+							<Label text="Taille des patchs" />
+							<TextField fx:id="tfTaillePatch" />
+							<Label text="Nombre d'imagettes" />
+							<TextField fx:id="tfNbImagettes" />
+						</children>
+						<Button fx:id="btnAppliquer" text="Appliquer" />
+					</VBox>
+				</children>
+			</VBox>
+
+		</VBox>
+	</right>
+
+	<bottom>
+		<HBox alignment="CENTER" spacing="15.0" styleClass="hbox"
+			BorderPane.alignment="CENTER">
+			<padding>
+				<Insets bottom="10" left="10" right="10" top="10" />
+			</padding>
+			<children>
+				<Button fx:id="btnCharger" text="Charger Image" />
+				<Button fx:id="btnAppliquer2" text="Appliquer" />
+				<Button fx:id="btnTelecharger" text="Télécharger" />
+			</children>
+		</HBox>
+	</bottom>
 </BorderPane>

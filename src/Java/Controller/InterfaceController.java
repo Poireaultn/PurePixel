@@ -14,6 +14,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
@@ -35,37 +36,74 @@ public class InterfaceController {
     @FXML private Button btnAppliquer;
     @FXML private Button btnAppliquer2;
     @FXML private Button btnTelecharger;
-
+  
+    @FXML private Label labelValeurBruit;
     @FXML private ImageView imageOriginale;
     @FXML private ImageView imageTraitee;
     @FXML private ListView<String> listeImages;
     @FXML private VBox boxParametresLocaux;
+    @FXML private ComboBox<String> comboMode;
+    @FXML private VBox boxDebruitage;
+    @FXML private VBox boxBruitage;
+    @FXML private Slider sliderNiveauBruitBruitage;
+    @FXML private Label labelValeurBruitBruitage;
+    @FXML private ComboBox<String> comboTraitement;
+
 
     private Map<String, Image> imagesChargees = new HashMap<>();
 
     @FXML
     public void initialize() {
-        // Initialisation des choix
-        comboMethode.getItems().addAll("Globale", "Locale");
-        comboSeuilType.getItems().addAll("Dur", "Doux");
-        comboSeuilMeth.getItems().addAll("VisuShrink", "BayesShrink");
+        // === Initialisation des ComboBox ===
+        comboTraitement.getItems().addAll("Débruitage", "Bruitage");
+        comboTraitement.setValue("Débruitage"); // Option par défaut
 
+        comboMethode.getItems().addAll("Globale", "Locale");
         comboMethode.getSelectionModel().selectFirst();
+
+        comboSeuilType.getItems().addAll("Dur", "Doux");
         comboSeuilType.getSelectionModel().selectFirst();
+
+        comboSeuilMeth.getItems().addAll("VisuShrink", "BayesShrink");
         comboSeuilMeth.getSelectionModel().selectFirst();
 
-        // Gestion dynamique de l'affichage des paramètres locaux
+        // === Mise à jour dynamique de l'affichage des paramètres locaux ===
         comboMethode.setOnAction(e -> updateAffichageParametres());
         updateAffichageParametres();
 
+        // === Gestion du changement de mode traitement (Débruitage / Bruitage) ===
+        comboTraitement.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if ("Bruitage".equals(newVal)) {
+                boxDebruitage.setVisible(false);
+                boxDebruitage.setManaged(false);
+                boxBruitage.setVisible(true);
+                boxBruitage.setManaged(true);
+            } else {
+                boxDebruitage.setVisible(true);
+                boxDebruitage.setManaged(true);
+                boxBruitage.setVisible(false);
+                boxBruitage.setManaged(false);
+            }
+        });
+
+        // === Sliders : mise à jour des labels associés ===
+        sliderNiveauBruit.valueProperty().addListener((obs, oldVal, newVal) -> {
+            labelValeurBruit.setText(String.format("Valeur : %.0f", newVal));
+        });
+
+        sliderNiveauBruitBruitage.valueProperty().addListener((obs, oldVal, newVal) -> {
+            labelValeurBruitBruitage.setText(String.format("Valeur : %.0f", newVal));
+        });
+
+        // === Boutons d'action ===
         btnCharger.setOnAction(e -> {
-			try {
-				chargerImage();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		});
+            try {
+                chargerImage();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
+
         btnTelecharger.setOnAction(e -> telechargerImage());
 
         btnAppliquer.setOnAction(e -> {
@@ -83,6 +121,8 @@ public class InterfaceController {
                 e1.printStackTrace();
             }
         });
+
+        // === Liste d'images : sélection et affichage ===
         listeImages.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 Image img = imagesChargees.get(newVal);
@@ -91,13 +131,8 @@ public class InterfaceController {
                 }
             }
         });
-
-        // Configuration des ImageView
-        imageOriginale.setPreserveRatio(true);
-        imageOriginale.setFitWidth(300);
-        imageTraitee.setPreserveRatio(true);
-        imageTraitee.setFitWidth(300);
     }
+
 
     private void updateAffichageParametres() {
         String methode = comboMethode.getValue();
