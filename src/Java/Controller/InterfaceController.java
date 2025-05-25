@@ -133,7 +133,7 @@ public class InterfaceController {
         });
     }
 
-
+    @FXML
     private void updateAffichageParametres() {
         String methode = comboMethode.getValue();
         boolean isLocale = "Locale".equals(methode);
@@ -141,47 +141,54 @@ public class InterfaceController {
         boxParametresLocaux.setManaged(isLocale);
     }
 
+    @FXML
     private void appliquerTraitement() throws IOException {
         String selectedNom = listeImages.getSelectionModel().getSelectedItem();
         if (selectedNom == null) {
             System.out.println("Veuillez sélectionner une image à traiter.");
             return;
         }
-
+    
         Image image = imagesChargees.get(selectedNom);
         if (image == null) {
             System.out.println("Image non trouvée.");
             return;
         }
-
-        String methode = comboMethode.getValue();
-        String typeSeuillage = comboSeuilType.getValue();
-        String methodeSeuil = comboSeuilMeth.getValue();
-        double sigma = sliderNiveauBruit.getValue();
-
-        Image imgDebruitee;
-
-        if (methode.equals("Globale")) {
-            imgDebruitee = Image.denoisingGlobalPCA(image, 8, typeSeuillage, methodeSeuil, sigma);
-        } else {
-            try {
-                int patchSize = Integer.parseInt(tfTaillePatch.getText());
-                int nbImagettes = Integer.parseInt(tfNbImagettes.getText());
-
-                imgDebruitee = Image.denoisingLocalPCA(image, nbImagettes, patchSize, typeSeuillage, methodeSeuil, sigma);
-            } catch (NumberFormatException e) {
-                System.out.println("Veuillez entrer des valeurs numériques valides pour les paramètres locaux.");
-                return;
+    
+        String traitement = comboTraitement.getValue();
+        Image resultat;
+    
+        if ("Bruitage".equals(traitement)) {
+            double sigma = sliderNiveauBruitBruitage.getValue();
+            resultat = Image.noising(image, sigma);
+        } else { // Débruitage
+            String methode = comboMethode.getValue();
+            String typeSeuillage = comboSeuilType.getValue();
+            String methodeSeuil = comboSeuilMeth.getValue();
+            double sigma = sliderNiveauBruit.getValue();
+    
+            if ("Globale".equals(methode)) {
+                resultat = Image.denoisingGlobalPCA(image, 8, typeSeuillage, methodeSeuil, sigma);
+            } else {
+                try {
+                    int patchSize = Integer.parseInt(tfTaillePatch.getText());
+                    int nbImagettes = Integer.parseInt(tfNbImagettes.getText());
+                    resultat = Image.denoisingLocalPCA(image, nbImagettes, patchSize, typeSeuillage, methodeSeuil, sigma);
+                } catch (NumberFormatException e) {
+                    System.out.println("Veuillez entrer des valeurs numériques valides pour les paramètres locaux.");
+                    return;
+                }
             }
         }
-
-        // Sauvegarde dans un fichier (optionnel)
-        String fileFinalName = "src/resources/Image/Resultats/IMG_debruitee.png";
-        Image.EnregistrerImage(imgDebruitee, fileFinalName);
-
-        // Affichage de l'image débruitée
-        imageTraitee.setImage(SwingFXUtils.toFXImage(imgDebruitee.toBufferedImage(), null));
+    
+        // Sauvegarde (optionnelle)
+        String fileFinalName = "src/resources/Image/Resultats/IMG_resultat.png";
+        Image.EnregistrerImage(resultat, fileFinalName);
+    
+        // Affichage
+        imageTraitee.setImage(SwingFXUtils.toFXImage(resultat.toBufferedImage(), null));
     }
+
 
     @FXML
     private void chargerImage() throws IOException {
