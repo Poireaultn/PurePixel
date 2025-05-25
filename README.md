@@ -41,28 +41,54 @@ Fichier > Importer > General > Existing Projects into Workspace
 
 ---
 
+## 🎨 Installation et configuration de JavaFX
+
+### 1. Télécharger JavaFX
+
+Téléchargez le SDK JavaFX correspondant à votre système d'exploitation depuis le site officiel :  
+🔗 [https://gluonhq.com/products/javafx/](https://gluonhq.com/products/javafx/)
+
+Décompressez l'archive dans un dossier de votre choix.
+
+### 2. Configurer JavaFX dans Eclipse
+
+1. Clic droit sur le projet > Properties
+2. Java Build Path > Libraries > Modulepath
+3. Cliquer sur "Add External JARs..."
+4. Ajouter les fichiers .jar du dossier lib/ de JavaFX
+5. Appliquer les changements
+
+### 3. Ajouter les VM arguments
+Toujours dans Eclipse :
+
+1. Aller dans Run > Run Configurations...
+2. Sélectionner votre configuration d'exécution (ou en créer une nouvelle)
+3. Onglet Arguments, partie VM arguments, ajouter :
+   ```
+   --module-path "C:/javafx-sdk-21/lib" --add-modules javafx.controls,javafx.fxml
+   ```
+⚠️ Remplacez C:/javafx-sdk-21/ par le chemin vers votre installation JavaFX.
+
+---
+
 ## 🖼️ Structure des fichiers image
 
 ```
 src/
-├── Image/
-│   ├── Images/           # Dossier contenant les images à traiter (.png, .jpg, ...)
-│   └── Resultats/        # Dossier de sortie pour les images débruitées
+│   └── Ressource/
+│       └── Image/
+│           ├── Images/          # Dossier contenant les images à traiter (.png, .jpg, ...)
+│           └── Résultats/       # Dossier de sortie pour les images débruitées
 ```
 
 ---
 
-## 🚀 Exécution du projet
+## 🚀 Exécution du projet en mode console
 
 ### ▶️ Depuis Eclipse
 
-1. Aller dans le fichier :
-   ```
-   src/PurePixel.java
-   ```
+1. Ouvrir le fichier src/Java/PurePixel.java
 2. Clic droit > **Run As > Java Application**
-
----
 
 ### 🧾 En ligne de commande
 
@@ -77,6 +103,33 @@ javac -cp "lib/commons-math3-3.6.1.jar" -d bin src/PurePixel/Main.java
 ```bash
 java -cp "bin:lib/commons-math3-3.6.1.jar" PurePixel.Main
 ```
+
+---
+
+## 🚀 Lancement de l'IHM
+
+### ▶️ Depuis Eclipse
+
+1. Ouvrir le fichier src/Java/App.java
+2. Clic droit > **Run As > Java Application**
+
+Assurez-vous que les VM arguments sont bien configurés comme indiqué ci-dessus.
+
+### 🧾 En ligne de commande
+
+#### 1. Compiler
+
+```bash
+javac --module-path /chemin/vers/javafx-sdk-21/lib --add-modules javafx.controls,javafx.fxml -cp "lib/commons-math3-3.6.1.jar" -d bin src/Java/*.java
+```
+
+#### 2. Exécuter
+
+```bash
+java --module-path /chemin/vers/javafx-sdk-21/lib --add-modules javafx.controls,javafx.fxml -cp "bin:lib/commons-math3-3.6.1.jar" Java.PurePixel
+```
+
+---
 
 ## 🧠 Fonctionnalités
 
@@ -93,10 +146,13 @@ java -cp "bin:lib/commons-math3-3.6.1.jar" PurePixel.Main
 ```
 PurePixel/
 ├── src/
-│   ├── Image/
-│   │   ├── Images/            # Images d’entrée
-│   │   └── Resultats/         # Images traitées
-│   └── PurePixel.java              # Fichier principal
+│   ├── Java/
+│   │   ├── App.java             # Fichier mode IHM
+│   │   └── PurePixel.java       # Fichier mode Console
+│   └── Ressource/
+│       └── Image/
+│           ├── Images/          # Images d’entrée
+│           └── Résultats/       # Images traitées
 ├── lib/
 │   └── commons-math3-3.6.1.jar  # Librairie mathématique
 └── README.md
