@@ -189,4 +189,4 @@ doc/index.html
 - **MENDIBURU Charles** — _Charles40130_
 - **POIREAULT Nathan** — _Poireaultn_
 
-Projet académique — **ING 1 GM — CY Tech 2025**
+Projet académique — **ING 1 GM/GI — CY Tech 2025**
