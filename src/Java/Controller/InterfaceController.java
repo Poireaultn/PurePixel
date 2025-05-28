@@ -9,19 +9,18 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import Java.Image.Image; // Assurez-vous que ce n'est pas javafx.scene.image.Image
+import Java.Image.Image; //classe Image personnalisée
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.geometry.Insets;
+
 
 public class InterfaceController {
 
@@ -31,15 +30,19 @@ public class InterfaceController {
     @FXML private Slider sliderNiveauBruit;
     @FXML private TextField tfTaillePatch;
     @FXML private TextField tfNbImagettes;
-
+    @FXML private Label labelOriginaleInfo;
+    @FXML private Label labelTraiteeInfo;
+    
     @FXML private Button btnCharger;
     @FXML private Button btnAppliquer;
     @FXML private Button btnAppliquer2;
     @FXML private Button btnTelecharger;
-  
+
     @FXML private Label labelValeurBruit;
     @FXML private ImageView imageOriginale;
     @FXML private ImageView imageTraitee;
+
+    private Image imageTraiteeBack;  // <-- Stocke l'image traitée pour export 
     @FXML private ListView<String> listeImages;
     @FXML private VBox boxParametresLocaux;
     @FXML private ComboBox<String> comboMode;
@@ -48,15 +51,33 @@ public class InterfaceController {
     @FXML private Slider sliderNiveauBruitBruitage;
     @FXML private Label labelValeurBruitBruitage;
     @FXML private ComboBox<String> comboTraitement;
+    @FXML private Label labelMSE;
+    @FXML private Label labelPSNR;
+    @FXML private HBox footerButtons;
+
+    private Map<String, Image> imagesOriginales = new HashMap<>();
 
 
     private Map<String, Image> imagesChargees = new HashMap<>();
 
     @FXML
     public void initialize() {
-        // === Initialisation des ComboBox ===
+    	
+    	
+    	Platform.runLater(() -> {
+    	    String imagePath = new File("src/resources/Image/Background/BG.jpg").toURI().toString();
+    	    imageOriginale.getScene().getRoot().setStyle(
+    	        "-fx-background-image: url('" + imagePath + "');" +
+    	        "-fx-background-size: cover;" +
+    	        "-fx-background-repeat: no-repeat;" +
+    	        "-fx-background-position: center;"
+    	    );
+    	});
+
+    	
+    	
         comboTraitement.getItems().addAll("Débruitage", "Bruitage");
-        comboTraitement.setValue("Débruitage"); // Option par défaut
+        comboTraitement.setValue("Débruitage");
 
         comboMethode.getItems().addAll("Globale", "Locale");
         comboMethode.getSelectionModel().selectFirst();
@@ -66,27 +87,21 @@ public class InterfaceController {
 
         comboSeuilMeth.getItems().addAll("VisuShrink", "BayesShrink");
         comboSeuilMeth.getSelectionModel().selectFirst();
+        
+        labelOriginaleInfo.setVisible(true);
+        labelTraiteeInfo.setVisible(true);
 
-        // === Mise à jour dynamique de l'affichage des paramètres locaux ===
         comboMethode.setOnAction(e -> updateAffichageParametres());
         updateAffichageParametres();
 
-        // === Gestion du changement de mode traitement (Débruitage / Bruitage) ===
         comboTraitement.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if ("Bruitage".equals(newVal)) {
-                boxDebruitage.setVisible(false);
-                boxDebruitage.setManaged(false);
-                boxBruitage.setVisible(true);
-                boxBruitage.setManaged(true);
-            } else {
-                boxDebruitage.setVisible(true);
-                boxDebruitage.setManaged(true);
-                boxBruitage.setVisible(false);
-                boxBruitage.setManaged(false);
-            }
+            boolean bruitage = "Bruitage".equals(newVal);
+            boxDebruitage.setVisible(!bruitage);
+            boxDebruitage.setManaged(!bruitage);
+            boxBruitage.setVisible(bruitage);
+            boxBruitage.setManaged(bruitage);
         });
 
-        // === Sliders : mise à jour des labels associés ===
         sliderNiveauBruit.valueProperty().addListener((obs, oldVal, newVal) -> {
             labelValeurBruit.setText(String.format("Valeur : %.0f", newVal));
         });
@@ -95,7 +110,6 @@ public class InterfaceController {
             labelValeurBruitBruitage.setText(String.format("Valeur : %.0f", newVal));
         });
 
-        // === Boutons d'action ===
         btnCharger.setOnAction(e -> {
             try {
                 chargerImage();
@@ -122,25 +136,29 @@ public class InterfaceController {
             }
         });
 
-        // === Liste d'images : sélection et affichage ===
         listeImages.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 Image img = imagesChargees.get(newVal);
                 if (img != null) {
                     imageOriginale.setImage(SwingFXUtils.toFXImage(img.toBufferedImage(), null));
+                    labelOriginaleInfo.setVisible(false); // Cache le message après sélection
                 }
             }
         });
     }
 
-    @FXML
     private void updateAffichageParametres() {
-        String methode = comboMethode.getValue();
-        boolean isLocale = "Locale".equals(methode);
+        boolean isLocale = "Locale".equals(comboMethode.getValue());
         boxParametresLocaux.setVisible(isLocale);
         boxParametresLocaux.setManaged(isLocale);
+
+        if (footerButtons != null) {
+            footerButtons.setPadding(isLocale ? new Insets(0, 10, 0, 10) : new Insets(10, 10, 10, 10));
+        }
     }
 
+    
+    
     @FXML
     private void appliquerTraitement() throws IOException {
         String selectedNom = listeImages.getSelectionModel().getSelectedItem();
@@ -148,48 +166,109 @@ public class InterfaceController {
             System.out.println("Veuillez sélectionner une image à traiter.");
             return;
         }
-    
-        Image image = imagesChargees.get(selectedNom);
-        if (image == null) {
+
+        Image imageOriginaleRef = imagesChargees.get(selectedNom);
+        if (imageOriginaleRef == null) {
             System.out.println("Image non trouvée.");
             return;
         }
-    
+
+        // Cloner l'image
+        double[][] pixelsClone = new double[imageOriginaleRef.getHeight()][imageOriginaleRef.getWidth()];
+        for (int i = 0; i < imageOriginaleRef.getHeight(); i++) {
+            System.arraycopy(imageOriginaleRef.getPixels()[i], 0, pixelsClone[i], 0, imageOriginaleRef.getWidth());
+        }
+        Image image = new Image(pixelsClone, imageOriginaleRef.getHeight(), imageOriginaleRef.getWidth());
+
         String traitement = comboTraitement.getValue();
         Image resultat;
-    
+
+        // Extraire le nom sans extension
+        String baseName = selectedNom.contains(".") ? selectedNom.substring(0, selectedNom.lastIndexOf('.')) : selectedNom;
+        String extension = ".png"; // on standardise l'export en PNG
+
         if ("Bruitage".equals(traitement)) {
+            //  Créer le dossier originals/ s’il n'existe pas
+            File originalDir = new File("src/resources/Image/originals/");
+            if (!originalDir.exists()) {
+                originalDir.mkdirs();
+            }
+
+            //  Sauvegarder l'image propre AVANT bruitage
+            String originalFileName = "src/resources/Image/originals/originale_" + baseName + extension;
+            Image.EnregistrerImage(image, originalFileName);
+
+            //  Appliquer le bruit
             double sigma = sliderNiveauBruitBruitage.getValue();
             resultat = Image.noising(image, sigma);
-        } else { // Débruitage
+
+            // Pas de calcul de MSE/PSNR ici
+            labelMSE.setText("MSE : —");
+            labelPSNR.setText("PSNR : —");
+
+        } else {
+            //  Débruitage
             String methode = comboMethode.getValue();
             String typeSeuillage = comboSeuilType.getValue();
             String methodeSeuil = comboSeuilMeth.getValue();
-            double sigma = sliderNiveauBruit.getValue();
-    
+            double sigma = Math.sqrt(sliderNiveauBruit.getValue());
+
             if ("Globale".equals(methode)) {
-                resultat = Image.denoisingGlobalPCA(image, 8, typeSeuillage, methodeSeuil, sigma);
+                int patchSize = 8;
+                resultat = Image.denoisingGlobalPCA(image, patchSize, typeSeuillage, methodeSeuil, sigma);
             } else {
                 try {
-                    int patchSize = Integer.parseInt(tfTaillePatch.getText());
-                    int nbImagettes = Integer.parseInt(tfNbImagettes.getText());
-                    resultat = Image.denoisingLocalPCA(image, nbImagettes, patchSize, typeSeuillage, methodeSeuil, sigma);
+                    String patchStr = tfTaillePatch.getText();
+                    String imagetteStr = tfNbImagettes.getText();
+
+                    if (patchStr.isEmpty() || imagetteStr.isEmpty()) {
+                        System.out.println("Veuillez remplir les champs taille de patch et taille d'imagette.");
+                        return;
+                    }
+
+                    int patchSize = Integer.parseInt(patchStr);
+                    int imagetteSize = Integer.parseInt(imagetteStr);
+
+                    resultat = Image.denoisingLocalPCA(image, imagetteSize, patchSize, typeSeuillage, methodeSeuil, sigma);
                 } catch (NumberFormatException e) {
-                    System.out.println("Veuillez entrer des valeurs numériques valides pour les paramètres locaux.");
+                    System.out.println("Erreur : les valeurs entrées doivent être des entiers valides.");
                     return;
                 }
             }
+
+            // Tenter de retrouver l'image originale sauvegardée
+            String originalFileName = "src/resources/Image/originals/originale_" + baseName + extension;
+            File originalFile = new File(originalFileName);
+            if (originalFile.exists()) {
+                Image imagePropre = new Image(originalFile.getAbsolutePath());
+                double mse = Image.MSE(imagePropre, resultat);
+                double psnr = Image.PSNR(mse);
+                labelMSE.setText(String.format("MSE : %.2f", mse));
+                labelPSNR.setText(String.format("PSNR : %.2f dB", psnr));
+            } else {
+                labelMSE.setText("MSE : —");
+                labelPSNR.setText("PSNR : —");
+                System.out.println(" Image originale non trouvée pour : " + baseName);
+            }
         }
-    
-        // Sauvegarde (optionnelle)
-        String fileFinalName = "src/resources/Image/Resultats/IMG_resultat.png";
+
+        // 📤 Sauvegarde de l’image traitée sous le même nom
+        File resultDir = new File("src/resources/Image/Resultats/");
+        if (!resultDir.exists()) {
+            resultDir.mkdirs();
+        }
+        String fileFinalName = "src/resources/Image/Resultats/" + baseName + extension;
         Image.EnregistrerImage(resultat, fileFinalName);
-    
-        // Affichage
+
+        // Affichage dans l’interface
+        imageTraiteeBack = resultat;
+        labelTraiteeInfo.setVisible(false); // Cache le message une fois l'image traitée affichée
         imageTraitee.setImage(SwingFXUtils.toFXImage(resultat.toBufferedImage(), null));
     }
 
+    
 
+    
     @FXML
     private void chargerImage() throws IOException {
         FileChooser fileChooser = new FileChooser();
@@ -202,21 +281,27 @@ public class InterfaceController {
         List<File> fichiers = fileChooser.showOpenMultipleDialog(null);
 
         if (fichiers != null) {
-            listeImages.getItems().clear();
-            imagesChargees.clear();
             for (File fichier : fichiers) {
-            	Image image = new Image(fichier.getAbsolutePath());
                 String nom = fichier.getName();
-                imagesChargees.put(nom, image);
-                listeImages.getItems().add(nom);
+                if (!imagesChargees.containsKey(nom)) {  // Évite les doublons
+                    Image image = new Image(fichier.getAbsolutePath());
+                    imagesChargees.put(nom, image);
+                    listeImages.getItems().add(nom);
+                }
             }
         }
     }
 
+    
+    
+    
+    
+    
+
     @FXML
     private void telechargerImage() {
-        if (imageTraitee.getImage() == null) {
-            System.out.println("Aucune image à sauvegarder.");
+        if (imageTraiteeBack == null) {
+            System.out.println("Aucune image traitée à sauvegarder.");
             return;
         }
 
@@ -232,8 +317,8 @@ public class InterfaceController {
 
         if (fichier != null) {
             try {
-                WritableImage writableImage = imageTraitee.snapshot(null, null);
-                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(writableImage, null);
+                // Utiliser l'image traitée directement
+                BufferedImage bufferedImage = imageTraiteeBack.toBufferedImage();
 
                 String extension = fichier.getName().toLowerCase().endsWith(".jpg") ? "jpg" : "png";
                 ImageIO.write(bufferedImage, extension, fichier);

@@ -1,7 +1,7 @@
 /* === Racine de l'application === */
 .root {
-    -fx-background-color: #f0f4f8;
-    -fx-font-family: "Segoe UI", sans-serif;
+    
+         -fx-font-family: "Segoe UI", sans-serif;
 }
 
 /* === Titre principal === */

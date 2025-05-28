@@ -325,15 +325,7 @@ public class Image {
 
 	    return new Image(pixels, imageHeight, imageWidth);
 	}
-
-	/**
-	* Reconstitue une image à partir d'une liste d'imagette.
-	*
-	* @param subImages      Liste d'imagettes.
-	* @param imageHeight Hauteur de l'image finale.
-	* @param imageWidth  Largeur de l'image finale.
-	* @return Image reconstruite.
-	*/
+	
 	public static Image reconstruction(ArrayList<Image> subImages, int imageHeight, int imageWidth) {
 		if (subImages == null || subImages.isEmpty()) return null;
 
@@ -491,25 +483,22 @@ public class Image {
 	}
 
 	
-	/**
-	 * Convertit cette instance d'Image (matrice de niveaux de gris) en BufferedImage.
-	 *
-	 * @return BufferedImage représentant l'image.
-	 */
 	public BufferedImage toBufferedImage() {
-	    BufferedImage bi = new BufferedImage(this.width, this.height, BufferedImage.TYPE_BYTE_GRAY);
-	    WritableRaster raster = bi.getRaster();
+	    BufferedImage bufferedImage = new BufferedImage(this.width, this.height, BufferedImage.TYPE_BYTE_GRAY);
+	    WritableRaster raster = bufferedImage.getRaster();
 
 	    for (int y = 0; y < this.height; y++) {
 	        for (int x = 0; x < this.width; x++) {
 	            int gray = (int) Math.round(this.pixels[y][x]);
-	            gray = Math.max(0, Math.min(255, gray)); // Clamp pour rester entre 0 et 255
+	            gray = Math.max(0, Math.min(255, gray)); // clamp entre 0 et 255
 	            raster.setSample(x, y, 0, gray);
 	        }
 	    }
 
-	    return bi;
+	    return bufferedImage;
 	}
+
+
 
 }
 

@@ -6,7 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/cytech/Info/PurePixel/PurePixel/lib/commons-math3-3.6.1.jar">
+	<classpathentry kind="lib" path="C:/Users/DELL/Documents/lib/commons-math3-3.6.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

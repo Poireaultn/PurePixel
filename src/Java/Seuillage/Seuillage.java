@@ -3,7 +3,7 @@ package Java.Seuillage;
 import java.util.List;
 import java.util.ArrayList;
 
-import Java.Vecteur.Vecteur;
+import Java.Vecteur.*;
 
 /**
  * Classe permettant d'appliquer différents types de seuillages (dur et doux)
